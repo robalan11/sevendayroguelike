@@ -1,3 +1,6 @@
+#ifndef level_h
+#define level_h
+
 #include <iostream>
 
 #define win_width 80
@@ -25,3 +28,5 @@ private:
 	Room* rooms;
 	int numrooms;
 };
+
+#endif
