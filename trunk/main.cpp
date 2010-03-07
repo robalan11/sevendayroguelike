@@ -2,6 +2,7 @@
 #include "Agent.h"
 #include "Player.h"
 #include "Monster.h"
+#include "Level.h"
 
 int main() {
     initscr();
@@ -13,6 +14,7 @@ int main() {
     curs_set(0);
     attron(COLOR_PAIR(1));
     
+    Level
     Agent *player = new Player(10, 10, 0);
     
     int input;
