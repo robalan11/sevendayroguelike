@@ -14,8 +14,8 @@ int main() {
     curs_set(0);
     attron(COLOR_PAIR(1));
     
-    Level
-    Agent *player = new Player(10, 10, 0);
+    Level *level = new Level();
+    Agent *player = new Player(10, 10, 0, level);
     
     int input;
     do {
