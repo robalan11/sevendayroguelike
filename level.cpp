@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include "levelgen.h"
+#include "level.h"
 
 using namespace std;
 
