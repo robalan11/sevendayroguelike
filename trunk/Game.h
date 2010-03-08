@@ -14,7 +14,7 @@ class Game {
         void play();
     private:
         WINDOW *level_win, *message_win, *stats_win;
-        Player *player;
+        Agent *player;
         Level *current_level;
 };
 

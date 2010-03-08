@@ -46,6 +46,7 @@ int Agent::take_turn() {
     return 0;
 }
 
-void Agent::calculate_visibility() {
-    
+int Agent::calculate_visibility() {
+    printw("Generic Player calculate_visibility");
+    return 0;
 }

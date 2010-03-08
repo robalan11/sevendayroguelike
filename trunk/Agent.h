@@ -29,7 +29,7 @@ class Agent {
         int get_facing();
         
         virtual int take_turn();
-        virtual void calculate_visibility();
+        virtual int calculate_visibility();
 };
 
 #endif
