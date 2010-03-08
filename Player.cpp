@@ -1,3 +1,4 @@
+#include <math.h>
 #include <curses.h>
 #include "Agent.h"
 #include "Player.h"
@@ -7,7 +8,7 @@ Player::Player(Level *loc) : Agent(loc->get_upstair_x(), loc->get_upstair_y(), 0
     
 }
 
-Player::Player(int x, int y, int f, Level *loc) : Agent(x, y, f, loc) {
+Player::Player(int x, int y, float f, Level *loc) : Agent(x, y, f, loc) {
     
 }
 
@@ -53,6 +54,13 @@ int Player::calculate_visibility() {
 		for (int j = -5; j <= 5; j++) {
 			if (position.x+i > win_width || position.y+j > win_height ||
 				position.x+i < 0 || position.y+j < 0) continue;
+
+			float angle = atan2(float(j),float(i));
+			if (angle < 0) angle += float(2*PI);
+			float anglediff = angle - facing;
+			if (anglediff > PI) anglediff -= float(2*PI);
+			if (abs(anglediff) > PI/3 && !(i==0 && j==0)) continue;
+
 			if (location->is_visible(position.x, position.y, position.x+i, position.y+j))
 				location->mark_visible(position.x+i, position.y+j);
 		}

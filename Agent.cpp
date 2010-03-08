@@ -1,8 +1,9 @@
+#include <math.h>
 #include <curses.h>
 #include "Agent.h"
 #include "Level.h"
 
-Agent::Agent(int x, int y, int f, Level *loc) {
+Agent::Agent(int x, int y, float f, Level *loc) {
     position.x = x;
     position.y = y;
     facing = f;
@@ -10,6 +11,7 @@ Agent::Agent(int x, int y, int f, Level *loc) {
 }
 
 void Agent::walk(int x, int y) {
+	face(atan2(float(y), float(x)));
     if(location->is_walkable(position.x+x, position.y+y)) {
         position.x += x;
         position.y += y;
@@ -19,10 +21,15 @@ void Agent::walk(int x, int y) {
 	}
 }
 
-void Agent::turn(int angle) {
+void Agent::turn(float angle) {
     facing += angle;
     while(facing < 0) facing += 360;
     while(facing >= 360) facing -= 360;
+}
+
+void Agent::face(float angle) {
+	if (angle < 0) angle += float(2*PI);
+	facing = angle;
 }
 
 void Agent::set_location(Level *loc) {
@@ -37,7 +44,7 @@ int Agent::get_y_pos() {
     return position.y;
 }
 
-int Agent::get_facing() {
+float Agent::get_facing() {
     return facing;
 }
 

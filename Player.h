@@ -12,7 +12,7 @@ class Player : public Agent {
         
     public:
         Player(Level *loc);
-        Player(int x, int y, int f, Level *loc);
+        Player(int x, int y, float f, Level *loc);
         int take_turn();
         int calculate_visibility();
 };
