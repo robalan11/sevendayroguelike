@@ -20,6 +20,7 @@ int main() {
     int input;
     do {
         clear();
+        level->print();
         mvaddch(player->get_y_pos(), player->get_x_pos(), '@');
         refresh();
         input = player->take_turn(); 

@@ -1,8 +1,6 @@
 #ifndef level_h
 #define level_h
 
-#include <iostream>
-
 #define win_width 80
 #define win_height 30
 
@@ -17,6 +15,7 @@ public:
 	~Level();
 
 	void print();
+	bool is_wall(int x, int y);
 
 private:
 	void generate();

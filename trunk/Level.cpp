@@ -1,10 +1,10 @@
-#include <iostream>
+#include <curses.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
 #include "Level.h"
 
-using namespace std;
+#define min(x, y) (x>y)?y:x
 
 Level::Level() {
 	generate();
@@ -157,7 +157,11 @@ bool Level::point_in_room(int x, int y, Room a) {
 void Level::print() {
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {
-			cout << map[i][j];
+			mvaddch(j, i, map[i][j]);
 		}
 	}
+}
+
+bool Level::is_wall(int x, int y) {
+    return (map[x][y] == '#');
 }
