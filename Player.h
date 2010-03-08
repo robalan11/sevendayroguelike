@@ -14,7 +14,7 @@ class Player : public Agent {
         Player(Level *loc);
         Player(int x, int y, int f, Level *loc);
         int take_turn();
-        void calculate_visibility();
+        int calculate_visibility();
 };
 
 #endif

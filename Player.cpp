@@ -47,11 +47,12 @@ int Player::take_turn() {
     return input;
 }
 
-void Player::calculate_visibility() {
+int Player::calculate_visibility() {
     location->clear_visibility();
     location->mark_visible(position.x, position.y);
     location->mark_visible(position.x+1, position.y);
     location->mark_visible(position.x, position.y+1);
     location->mark_visible(position.x-1, position.y);
     location->mark_visible(position.x, position.y-1);
+    return 0;
 }
