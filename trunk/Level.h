@@ -27,6 +27,7 @@ public:
 	void open_door(int x, int y);
 
 	void print();
+	bool is_visible(int x1, int y1, int x2, int y2);
 	bool is_walkable(int x, int y);
 	bool is_wall(int x, int y);
 	bool is_closed_door(int x, int y);
