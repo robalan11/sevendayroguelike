@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <math.h>
 #include <curses.h>
 #include "Agent.h"
@@ -59,7 +60,7 @@ int Player::calculate_visibility() {
 			if (angle < 0) angle += float(2*PI);
 			float anglediff = angle - facing;
 			if (anglediff > PI) anglediff -= float(2*PI);
-			if (abs(anglediff) > PI/3 && !(i==0 && j==0)) continue;
+			if (fabs(anglediff) > PI/3 && !(i==0 && j==0)) continue;
 
 			if (location->is_visible(position.x, position.y, position.x+i, position.y+j))
 				location->mark_visible(position.x+i, position.y+j);
