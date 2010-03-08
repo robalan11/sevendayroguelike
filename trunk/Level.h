@@ -24,6 +24,7 @@ public:
 
     void mark_visible(int x, int y);
     void clear_visibility();
+	void open_door(int x, int y);
 
 	void print();
 	bool is_walkable(int x, int y);
