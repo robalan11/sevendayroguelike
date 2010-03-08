@@ -7,6 +7,7 @@
 int main() {
     initscr();
     start_color();
+    resize_term(35, 82);
     init_pair(1, COLOR_RED, COLOR_BLACK);
     raw();
     noecho();
