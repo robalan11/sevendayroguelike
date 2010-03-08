@@ -20,7 +20,7 @@ void Level::generate() {
 	srand((unsigned int)time(NULL));
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {
-			map[i][j] = ' ';
+			map[i][j].symbol = ' ';
 		}
 	}
 
@@ -36,12 +36,12 @@ void Level::generate() {
 		
 		for (int k = temp.top; k <= temp.bottom; k++) {
 			for (int j = temp.left; j <= temp.right; j++) {
-				if (map[j][k] == ' ') {
+				if (map[j][k].symbol == ' ') {
 					roomfilled ++;
 					//if (j==temp.left || k==temp.top || j==temp.right || k==temp.bottom)
 					//	map[j][k] = '#';
 					//else
-					map[j][k] = '.';
+					map[j][k].symbol = '.';
 				}
 			}
 		}
@@ -73,12 +73,7 @@ void Level::generate() {
 			else if (y != endy) y += dy;
 			else x += dx;
 
-			/*if (map[x][y] == '#' && ((map[x-1][y] == '.' && map[x+1][y] == '.') || (map[x][y-1] == '.' && map[x][y+1] == '.'))) {
-				map[x][y] = '+';
-				for (int i = 0; i < numrooms; i++)
-					if (point_in_room(x, y, rooms[i])) rooms[i].connected = true;
-			} else*/
-			map[x][y] = '.';
+			map[x][y].symbol = '.';
 			for (int i = 0; i < numrooms; i++)
 				if (point_in_room(x, y, rooms[i])) rooms[i].connected = true;
 		}
@@ -93,15 +88,15 @@ void Level::generate() {
 		}
 		// If all the rooms are connected, add stairs
 		if (allroomsconnected) {
-			map[rand()%(rooms[0].right-rooms[0].left) + rooms[0].left][rand()%(rooms[0].bottom-rooms[0].top) + rooms[0].top] = '<';
-			map[rand()%(target.right-target.left) + target.left][rand()%(target.bottom-target.top) + target.top] = '>';
+			map[rand()%(rooms[0].right-rooms[0].left) + rooms[0].left][rand()%(rooms[0].bottom-rooms[0].top) + rooms[0].top].symbol = '<';
+			map[rand()%(target.right-target.left) + target.left][rand()%(target.bottom-target.top) + target.top].symbol = '>';
 		}
 	}
 	
 	// Fill walls
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {
-			if (map[i][j] == ' ') map[i][j] = '#';
+			if (map[i][j].symbol == ' ') map[i][j].symbol = '#';
 		}
 	}
 
@@ -109,7 +104,7 @@ void Level::generate() {
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {
 			bool good = false;
-			if (map[i][j] == '.' && map[i-1][j] == '.' && map[i+1][j] == '.' && map[i][j-1] == '#' && map[i][j+1] == '#') {
+			if (map[i][j].symbol == '.' && map[i-1][j].symbol == '.' && map[i+1][j].symbol == '.' && map[i][j-1].symbol == '#' && map[i][j+1].symbol == '#') {
 				for (int k = 0; k < numrooms; k++) {
 					if (point_in_room(i-1, j, rooms[k]) || point_in_room(i+1, j, rooms[k])) {
 						good = true;
@@ -117,7 +112,7 @@ void Level::generate() {
 					}
 				}
 			}
-			else if (map[i][j] == '.' && map[i][j-1] == '.' && map[i][j+1] == '.' && map[i-1][j] == '#' && map[i+1][j] == '#') {
+			else if (map[i][j].symbol == '.' && map[i][j-1].symbol == '.' && map[i][j+1].symbol == '.' && map[i-1][j].symbol == '#' && map[i+1][j].symbol == '#') {
 				for (int k = 0; k < numrooms; k++) {
 					if (point_in_room(i, j-1, rooms[k]) || point_in_room(i, j+1, rooms[k])) {
 						good = true;
@@ -125,7 +120,7 @@ void Level::generate() {
 					}
 				}
 			}
-			if (good) map[i][j] = '+';
+			if (good) map[i][j].symbol = '+';
 		}
 	}
 }
@@ -157,11 +152,11 @@ bool Level::point_in_room(int x, int y, Room a) {
 void Level::print() {
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {
-			mvaddch(j, i, map[i][j]);
+			mvaddch(j, i, map[i][j].symbol);
 		}
 	}
 }
 
 bool Level::is_wall(int x, int y) {
-    return (map[x][y] == '#');
+    return (map[x][y].symbol == '#');
 }
