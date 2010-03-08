@@ -49,10 +49,13 @@ int Player::take_turn() {
 
 int Player::calculate_visibility() {
     location->clear_visibility();
-    location->mark_visible(position.x, position.y);
-    location->mark_visible(position.x+1, position.y);
-    location->mark_visible(position.x, position.y+1);
-    location->mark_visible(position.x-1, position.y);
-    location->mark_visible(position.x, position.y-1);
+	for (int i = -5; i <= 5; i++) {
+		for (int j = -5; j <= 5; j++) {
+			if (position.x+i > win_width || position.y+j > win_height ||
+				position.x+i < 0 || position.y+j < 0) continue;
+			if (location->is_visible(position.x, position.y, position.x+i, position.y+j))
+				location->mark_visible(position.x+i, position.y+j);
+		}
+	}
     return 0;
 }

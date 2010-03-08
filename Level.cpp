@@ -185,6 +185,39 @@ void Level::print() {
 	}
 }
 
+bool Level::is_visible(int x1, int y1, int x2, int y2) {
+	bool steep = abs(y2-y1) > abs(x2-x1);
+	float error = 0;
+	if (!steep) {
+		float derror = (float)(y2-y1)/(float)(x2-x1);
+		int y = y1;
+		int dx = x1 < x2 ? 1 : -1;
+		int dy = y1 < y2 ? 1 : -1;
+		for (int x = x1; abs(x-x2) > 0; x += dx) {
+			if (!is_walkable(x, y)) return false;
+			error += derror;
+			if (abs(error) > 0.5) {
+				y += dy;
+				error -= 1.0;
+			}
+		}
+	} else {
+		float derror = (float)(x2-x1)/(float)(y2-y1);
+		int x = x1;
+		int dx = x1 < x2 ? 1 : -1;
+		int dy = y1 < y2 ? 1 : -1;
+		for (int y = y1; abs(y-y2) > 0; y += dy) {
+			if (!is_walkable(x, y)) return false;
+			error += derror;
+			if (abs(error) > 0.5) {
+				x += dx;
+				error -= 1.0;
+			}
+		}
+	}
+	return true;
+}
+
 bool Level::is_walkable(int x, int y) {
     return !(is_wall(x, y) || is_closed_door(x, y));
 }
