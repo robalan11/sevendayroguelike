@@ -15,7 +15,8 @@ class Agent {
         } position;      // Position in the level.
         int facing;      // Facing direction: 0=North.
         int speed;       // Not sure what this means yet.
-        Level *location; // The level this agent currently inhabits
+        int vision;      // Distance this agent can see.
+        Level *location; // The level this agent currently inhabits.
         
     public:
         Agent(int x, int y, int f, Level *loc);
@@ -28,6 +29,7 @@ class Agent {
         int get_facing();
         
         virtual int take_turn();
+        virtual void calculate_visibility();
 };
 
 #endif
