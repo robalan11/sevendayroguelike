@@ -167,6 +167,11 @@ void Level::clear_visibility() {
             map[i][j].visible = FALSE;
 }
 
+void Level::open_door(int x, int y) {
+	if (map[x][y].symbol == '+')
+		map[x][y].symbol = '/';
+}
+
 void Level::print() {
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {

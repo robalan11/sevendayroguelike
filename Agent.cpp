@@ -14,6 +14,9 @@ void Agent::walk(int x, int y) {
         position.x += x;
         position.y += y;
     }
+	else if(location->is_closed_door(position.x+x, position.y+y)) {
+		location->open_door(position.x+x, position.y+y);
+	}
 }
 
 void Agent::turn(int angle) {
