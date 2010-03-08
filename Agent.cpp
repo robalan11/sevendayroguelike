@@ -9,7 +9,7 @@ Agent::Agent(int x, int y, int f, Level *loc) {
     location = loc;
 }
 
-void Agent::move(int x, int y) {
+void Agent::walk(int x, int y) {
     if(!(location->is_wall(position.x+x, position.y+y))) {
         position.x += x;
         position.y += y;

@@ -19,7 +19,7 @@ class Agent {
         
     public:
         Agent(int x, int y, int f, Level *loc);
-        void move(int x, int y);
+        void walk(int x, int y);
         void turn(int angle);
         void set_location(Level *loc);
         
