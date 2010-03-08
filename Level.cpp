@@ -6,8 +6,9 @@
 
 #define min(x, y) (x>y)?y:x
 
-Level::Level() {
+Level::Level(WINDOW *win) {
 	generate();
+	level_win = win;
 }
 
 Level::~Level() {}
@@ -21,6 +22,8 @@ void Level::generate() {
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {
 			map[i][j].symbol = ' ';
+			map[i][j].revealed = FALSE;
+			map[i][j].visible = FALSE;
 		}
 	}
 
@@ -88,8 +91,12 @@ void Level::generate() {
 		}
 		// If all the rooms are connected, add stairs
 		if (allroomsconnected) {
-			map[rand()%(rooms[0].right-rooms[0].left) + rooms[0].left][rand()%(rooms[0].bottom-rooms[0].top) + rooms[0].top].symbol = '<';
-			map[rand()%(target.right-target.left) + target.left][rand()%(target.bottom-target.top) + target.top].symbol = '>';
+            upstair.x = rand() % (rooms[0].right - rooms[0].left) + rooms[0].left;
+            upstair.y = rand() % (rooms[0].bottom - rooms[0].top) + rooms[0].top;
+			map[upstair.x][upstair.y].symbol = '<';
+			downstair.x = rand() % (target.right - target.left) + target.left;
+			downstair.y = rand() % (target.bottom - target.top) + target.top;
+			map[downstair.x][downstair.y].symbol = '>';
 		}
 	}
 	
@@ -149,14 +156,58 @@ bool Level::point_in_room(int x, int y, Room a) {
 	return (x <= a.right && x >= a.left && y <= a.bottom && y >= a.top);
 }
 
+void Level::mark_visible(int x, int y) {
+    map[x][y].visible = TRUE;
+    map[x][y].revealed = TRUE;
+}
+
+void Level::clear_visibility() {
+    for(int j = 0; j < win_height; j++)
+        for(int i = 0; i < win_width; i++)
+            map[i][j].visible = FALSE;
+}
+
 void Level::print() {
 	for (int j = 0; j < win_height; j++) {
 		for (int i = 0; i < win_width; i++) {
-			mvaddch(j, i, map[i][j].symbol);
+            if(map[i][j].revealed) {
+                if(map[i][j].visible)
+                    mvwaddch(level_win, j, i, map[i][j].symbol | COLOR_PAIR(0));
+                else
+                    mvwaddch(level_win, j, i, map[i][j].symbol | COLOR_PAIR(1));
+            }
 		}
 	}
 }
 
+bool Level::is_walkable(int x, int y) {
+    return !(is_wall(x, y) || is_closed_door(x, y));
+}
+
 bool Level::is_wall(int x, int y) {
     return (map[x][y].symbol == '#');
+}
+
+bool Level::is_closed_door(int x, int y) {
+    return (map[x][y].symbol == '+');
+}
+
+bool Level::is_floor(int x, int y) {
+    return (map[x][y].symbol == '.');
+}
+
+bool Level::is_upstair(int x, int y) {
+    return (map[x][y].symbol == '<');
+}
+
+bool Level::is_downstair(int x, int y) {
+    return (map[x][y].symbol == '>');
+}
+
+int Level::get_upstair_x() {
+    return upstair.x;
+}
+
+int Level::get_upstair_y() {
+    return upstair.y;
 }

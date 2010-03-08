@@ -10,7 +10,7 @@ Agent::Agent(int x, int y, int f, Level *loc) {
 }
 
 void Agent::walk(int x, int y) {
-    if(!(location->is_wall(position.x+x, position.y+y))) {
+    if(location->is_walkable(position.x+x, position.y+y)) {
         position.x += x;
         position.y += y;
     }
@@ -41,4 +41,8 @@ int Agent::get_facing() {
 int Agent::take_turn() {
     printw("Generic Player take_turn");
     return 0;
+}
+
+void Agent::calculate_visibility() {
+    
 }

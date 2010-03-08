@@ -11,8 +11,10 @@ class Player : public Agent {
     protected:
         
     public:
+        Player(Level *loc);
         Player(int x, int y, int f, Level *loc);
         int take_turn();
+        void calculate_visibility();
 };
 
 #endif

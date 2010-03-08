@@ -1,33 +1,11 @@
-#include <curses.h>
-#include "Agent.h"
-#include "Player.h"
-#include "Monster.h"
-#include "Level.h"
+#include "Game.h"
 
 int main() {
-    initscr();
-    start_color();
-    resize_term(35, 82);
-    init_pair(1, COLOR_RED, COLOR_BLACK);
-    raw();
-    noecho();
-    keypad(stdscr, TRUE);
-    curs_set(0);
-    attron(COLOR_PAIR(1));
+    Game *game = new Game();
     
-    Level *level = new Level();
-    Agent *player = new Player(10, 10, 0, level);
+    game->play();
     
-    int input;
-    do {
-        clear();
-        level->print();
-        mvaddch(player->get_y_pos(), player->get_x_pos(), '@');
-        refresh();
-        input = player->take_turn(); 
-    } while(input != 'Q');
+    delete game;
     
-    attroff(COLOR_PAIR(1));
-    endwin();
     return 0;
 }
