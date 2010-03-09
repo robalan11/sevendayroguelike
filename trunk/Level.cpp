@@ -4,7 +4,9 @@
 #include <math.h>
 #include "Level.h"
 
-#define min(x, y) (x>y)?y:x
+#define min(x, y) ((x>y)?y:x)
+#define max(x, y) ((x>y)?x:y)
+#define sgn(x) ((x==0)?0:((x>0)?1:-1))
 
 Level::Level(WINDOW *win) {
 	generate();
@@ -15,20 +17,20 @@ Level::~Level() {}
 
 void Level::generate() {
 	// Declare stuff and fill the map with spaces
-	rooms = new Room[win_width];
+	rooms = new Room[map_width];
 	numrooms = 0;
 	int roomfilled = 0;
 	srand((unsigned int)time(NULL));
-	for (int j = 0; j < win_height; j++) {
-		for (int i = 0; i < win_width; i++) {
+	for (int j = 0; j < map_height; j++) {
+		for (int i = 0; i < map_width; i++) {
 			map[i][j].symbol = ' ';
-			map[i][j].revealed = FALSE;
-			map[i][j].visible = FALSE;
+			map[i][j].revealed = false;
+			map[i][j].visible = false;
 		}
 	}
 
 	// Add rooms until the map is 50% full of room tiles
-	while(roomfilled < 0.5 * win_width * win_height) {
+	while(roomfilled < 0.5 * map_width * map_height) {
 		Room temp = rect_room();
 		
 		bool valid = true;
@@ -101,15 +103,15 @@ void Level::generate() {
 	}
 	
 	// Fill walls
-	for (int j = 0; j < win_height; j++) {
-		for (int i = 0; i < win_width; i++) {
+	for (int j = 0; j < map_height; j++) {
+		for (int i = 0; i < map_width; i++) {
 			if (map[i][j].symbol == ' ') map[i][j].symbol = '#';
 		}
 	}
 
 	// Add doors
-	for (int j = 0; j < win_height; j++) {
-		for (int i = 0; i < win_width; i++) {
+	for (int j = 0; j < map_height; j++) {
+		for (int i = 0; i < map_width; i++) {
 			bool good = false;
 			if (map[i][j].symbol == '.' && map[i-1][j].symbol == '.' && map[i+1][j].symbol == '.' && map[i][j-1].symbol == '#' && map[i][j+1].symbol == '#') {
 				for (int k = 0; k < numrooms; k++) {
@@ -133,17 +135,17 @@ void Level::generate() {
 }
 
 Room Level::rect_room() {
-int x = rand() % (int)floor(win_width * 0.9) + 1;
-		int width = rand() % (int)floor(win_width * 0.25) + int(win_width * 0.15);
-		int y = rand() % (int)floor(win_height * 0.9) + 1;
-		int height = rand() % (int)floor(win_height * 0.3) + int(win_height * 0.15);
+int x = rand() % (int)floor(map_width * 0.9) + 1;
+		int width = rand() % (int)floor(map_width * 0.25) + int(map_width * 0.15);
+		int y = rand() % (int)floor(map_height * 0.9) + 1;
+		int height = rand() % (int)floor(map_height * 0.3) + int(map_height * 0.15);
 
 		Room temp;
 		temp.connected = false;
 		temp.left = x;
-		temp.right = min(x + width, win_width-2);
+		temp.right = min(x + width, map_width-2);
 		temp.top = y;
-		temp.bottom = min(y + height, win_height-2);
+		temp.bottom = min(y + height, map_height-2);
 		
 		return temp;
 }
@@ -157,14 +159,14 @@ bool Level::point_in_room(int x, int y, Room a) {
 }
 
 void Level::mark_visible(int x, int y) {
-    map[x][y].visible = TRUE;
-    map[x][y].revealed = TRUE;
+    map[x][y].visible = true;
+    map[x][y].revealed = true;
 }
 
 void Level::clear_visibility() {
-    for(int j = 0; j < win_height; j++)
-        for(int i = 0; i < win_width; i++)
-            map[i][j].visible = FALSE;
+    for(int j = 0; j < map_height; j++)
+        for(int i = 0; i < map_width; i++)
+            map[i][j].visible = false;
 }
 
 void Level::open_door(int x, int y) {
@@ -173,8 +175,8 @@ void Level::open_door(int x, int y) {
 }
 
 void Level::print() {
-	for (int j = 0; j < win_height; j++) {
-		for (int i = 0; i < win_width; i++) {
+	for (int j = 0; j < map_height; j++) {
+		for (int i = 0; i < map_width; i++) {
             if(map[i][j].revealed) {
                 if(map[i][j].visible)
                     mvwaddch(level_win, j, i, map[i][j].symbol | COLOR_PAIR(0));
@@ -185,6 +187,7 @@ void Level::print() {
 	}
 }
 
+/*
 bool Level::is_visible(int x1, int y1, int x2, int y2) {
 	bool steep = abs(y2-y1) > abs(x2-x1);
 	float error = 0;
@@ -217,9 +220,144 @@ bool Level::is_visible(int x1, int y1, int x2, int y2) {
 	}
 	return true;
 }
+*/
+
+/*
+//Simplistic center-to-nearest-corner line of sight
+bool Level::is_visible(int x1, int y1, int x2, int y2) {
+    int delta_x = x2 - x1;
+    int delta_y = y2 - y1;
+    int sgn_x = delta_x > 0 ? 1 : -1;
+    int sgn_y = delta_y > 0 ? 1 : -1;
+    
+    if(delta_x == 0) {
+        for(int y = y1 + sgn_y; y != y2; y += sgn_y) {
+            if(is_sight_blocking(x1, y))
+                return false;
+        }
+    }
+    else if(delta_y == 0) {
+        for(int x = x1 + sgn_x; x != x2; x += sgn_x) {
+            if(is_sight_blocking(x, y1))
+                return false;
+        }
+    }
+    else {
+        float x = x1;
+        float y = y1;
+        x += 0.5;
+        y += 0.5;
+        float slope = (float)(y2-y) / (float)(x2-x);
+        float diff_x = sgn_x*floor(sgn_x*x + 1)-x;
+        float diff_y = sgn_y*floor(sgn_y*y + 1)-y;
+        while(sgn_x*x < sgn_x*(float)x2) {
+            if(fabs(diff_y / diff_x) > fabs(slope)) {
+                x += diff_x;
+                y += slope * diff_x;
+            } else {
+                y += diff_y;
+                x += diff_y / slope;
+            }
+            if(is_sight_blocking((int)floor(x), (int)floor(y)))
+                return false;
+            float diff_x = sgn_x*floor(sgn_x*x + 1)-x;
+            float diff_y = sgn_y*floor(sgn_y*y + 1)-y;
+        }
+    }
+    
+    return true;
+}
+*/
+
+bool Level::is_visible(int x1, int y1, int x2, int y2) {
+    if(x1==x2 && y1==y2) return true;
+    else return !(obstructed(x1, y1, x2, y2) &&
+                obstructed(x1+1, y1, x2, y2) &&
+                obstructed(x1, y1+1, x2, y2) &&
+                obstructed(x1+1, y1+1, x2, y2));
+}
+
+bool Level::obstructed(int x1, int y1, int x2, int y2) {
+    int sgn_x = sgn(x2-x1);
+    int sgn_y = sgn(y2-y1);
+    
+    if(sgn_x == 1 && sgn_y == 1 && is_sight_blocking(x1+1, y1+1)) return true;
+    if(sgn_x == -1 && sgn_y == 1 && is_sight_blocking(x1-1, y1+1)) return true;
+    if(sgn_x == -1 && sgn_y == -1 && is_sight_blocking(x1-1, y1-1)) return true;
+    if(sgn_x == 1 && sgn_y == -1 && is_sight_blocking(x1+1, y1-1)) return true;
+    
+    int delta_x = abs(x2 - x1);
+    int delta_y = abs(y2 - y1);
+    int x, y, qx, qy, rx, ry;
+    
+    if(delta_x != 0) {
+        for(int dx = 1; dx < delta_x; dx++) {
+            qy = dx * delta_y / delta_x;
+            ry = dx * delta_y % delta_x;
+            x = x1 + dx * sgn_x;
+            y = y1 + qy * sgn_y;
+            if(rx == 0) {
+                if(corner_obstructed(x, y, sgn_x, sgn_y))
+                    return true;
+            } else {
+                if(sgn_y == -1)
+                    y--;
+                if(is_sight_blocking(x, y) || is_sight_blocking(x-1, y))
+                    return true;
+            }
+        }
+    }
+    
+    if(delta_y != 0) {
+        for(int dy = 1; dy < delta_y; dy++) {
+            qx = dy * delta_x / delta_y;
+            rx = dy * delta_x % delta_y;
+            y = y1 + dy * sgn_y;
+            x = x1 + qx * sgn_x;
+            if(ry == 0) {
+                if(corner_obstructed(x, y, sgn_x, sgn_y))
+                    return true;
+            } else {
+                if(sgn_x == -1)
+                    x--;
+                if(is_sight_blocking(x, y) || is_sight_blocking(x, y-1))
+                    return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+bool Level::corner_obstructed(int x, int y, int sgn_x, int sgn_y) {
+    if(is_sight_blocking(x, y) && is_sight_blocking(x, y-1)) return true;
+    if(is_sight_blocking(x, y) && is_sight_blocking(x-1, y)) return true;
+    if(is_sight_blocking(x-1, y-1) && is_sight_blocking(x, y-1)) return true;
+    if(is_sight_blocking(x-1, y-1) && is_sight_blocking(x-1, y)) return true;
+    
+    if(sgn_x*sgn_y == 1) {
+        if(is_sight_blocking(x, y) || is_sight_blocking(x-1, y-1))
+            return true;
+    }
+    else if(sgn_x*sgn_y == -1) {
+        if(is_sight_blocking(x, y-1) || is_sight_blocking(x-1, y))
+            return true;
+    }
+    else {
+        if(is_sight_blocking(x, y) || is_sight_blocking(x, y-1) ||
+                is_sight_blocking(x-1, y-1) || is_sight_blocking(x-1, y))
+            return true;
+    }
+    
+    return false;    
+}
 
 bool Level::is_walkable(int x, int y) {
     return !(is_wall(x, y) || is_closed_door(x, y));
+}
+
+bool Level::is_sight_blocking(int x, int y) {
+    return (is_wall(x, y) || is_closed_door(x, y));
 }
 
 bool Level::is_wall(int x, int y) {

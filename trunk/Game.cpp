@@ -37,7 +37,7 @@ bool Game::init_game() {
 }
 
 void Game::play() {
-    player->calculate_visibility();
+    player->mutual_fov();
     int input;
     do {
         wclear(level_win);
@@ -46,7 +46,8 @@ void Game::play() {
         wrefresh(level_win);
         
         wclear(message_win);
-        mvwprintw(message_win, 0, 0, "Player at x:%i, y:%i", player->get_x_pos(), player->get_y_pos());
+        mvwprintw(message_win, 0, 0, "Player at x:%i, y:%i, facing:%f",
+            player->get_x_pos(), player->get_y_pos(), player->get_facing());
         wrefresh(message_win);
         
         refresh();

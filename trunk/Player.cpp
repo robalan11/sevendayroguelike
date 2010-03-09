@@ -41,30 +41,49 @@ int Player::take_turn() {
         case '.':
             walk(1, 1);
             break;
+        case 'h':
+            turn(-PI/4);
+            break;
+        case ';':
+            turn(PI/4);
+            break;
         default:
             break;
     }
     
-    calculate_visibility();
+    mutual_fov();
     return input;
 }
 
+/*
 int Player::calculate_visibility() {
     location->clear_visibility();
-	for (int i = -5; i <= 5; i++) {
-		for (int j = -5; j <= 5; j++) {
-			if (position.x+i > win_width || position.y+j > win_height ||
+	for (int i = -vision; i <= vision; i++) {
+		for (int j = -vision; j <= vision; j++) {
+			if (position.x+i >= map_width || position.y+j >= map_height ||
 				position.x+i < 0 || position.y+j < 0) continue;
 
 			float angle = atan2(float(j),float(i));
 			if (angle < 0) angle += float(2*PI);
 			float anglediff = angle - facing;
 			if (anglediff > PI) anglediff -= float(2*PI);
-			if (fabs(anglediff) > PI/3 && !(i==0 && j==0)) continue;
+//			if (fabs(anglediff) > PI/3 && !(i==0 && j==0)) continue;
 
 			if (location->is_visible(position.x, position.y, position.x+i, position.y+j))
 				location->mark_visible(position.x+i, position.y+j);
 		}
 	}
     return 0;
+}
+*/
+
+void Player::mutual_fov() {
+    location->clear_visibility();
+    Agent::mutual_fov();
+    for(int i = 0; i < n_visible_corners; i++) {
+        location->mark_visible(visible_corners[i].x, visible_corners[i].y);
+        location->mark_visible(visible_corners[i].x-1, visible_corners[i].y);
+        location->mark_visible(visible_corners[i].x, visible_corners[i].y-1);
+        location->mark_visible(visible_corners[i].x-1, visible_corners[i].y-1);
+    }
 }

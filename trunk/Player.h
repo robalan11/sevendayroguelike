@@ -14,7 +14,7 @@ class Player : public Agent {
         Player(Level *loc);
         Player(int x, int y, float f, Level *loc);
         int take_turn();
-        int calculate_visibility();
+        void mutual_fov();
 };
 
 #endif

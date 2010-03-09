@@ -12,17 +12,22 @@
 
 class Agent {
     protected:
-        struct {
-            int x, y;
-        } position;      // Position in the level.
+        Position position; // Position in the level.
         float facing;      // Facing direction: 0=North.
-        int speed;       // Not sure what this means yet.
-        int vision;      // Distance this agent can see.
-        Level *location; // The level this agent currently inhabits.
+        int speed;         // Not sure what this means yet.
+        int vision;        // Distance this agent can see.
+                           // If this value changes, fov must be reallocated.
+        Level *location;   // The level this agent currently inhabits.
+        int n_visible_corners;
+                           // The number of corners the agent can see.
+        Position *visible_corners;
+                           // Array of points the agent can see.
+                           // Must be reallocated if vision range changes.
         
     public:
         Agent(int x, int y, float f, Level *loc);
         void walk(int x, int y);
+        void walk_turn(int x, int y);
         void turn(float angle);
 		void face(float angle);
         void set_location(Level *loc);
@@ -32,7 +37,7 @@ class Agent {
         float get_facing();
         
         virtual int take_turn();
-        virtual int calculate_visibility();
+        virtual void mutual_fov();
 };
 
 #endif
