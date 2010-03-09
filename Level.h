@@ -3,8 +3,12 @@
 
 #include <curses.h>
 
-#define win_width 80
-#define win_height 30
+#define map_width 80
+#define map_height 30
+
+struct Position {
+    int x, y;
+};
 
 struct Tile{
 	bool revealed;
@@ -29,6 +33,7 @@ public:
 	void print();
 	bool is_visible(int x1, int y1, int x2, int y2);
 	bool is_walkable(int x, int y);
+	bool is_sight_blocking(int x, int y);
 	bool is_wall(int x, int y);
 	bool is_closed_door(int x, int y);
 	bool is_floor(int x, int y);
@@ -42,12 +47,14 @@ private:
 	Room rect_room();
 	bool room_intersect(Room a, Room b);
 	bool point_in_room(int x, int y, Room a);
+	bool obstructed(int x1, int y1, int x2, int y2);
+	bool corner_obstructed(int x, int y, int sgn_x, int sgn_y);
 
-	Tile map[win_width][win_height];
+	Tile map[map_width][map_height];
 	Room* rooms;
 	int numrooms;
-	struct {int x; int y;} upstair;
-	struct {int x; int y;} downstair;
+	Position upstair;
+	Position downstair;
 	
 	WINDOW *level_win;
 };
