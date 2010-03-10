@@ -11,9 +11,9 @@ struct Position {
 };
 
 struct Tile{
-	bool revealed;
-	bool visible;
-	char symbol;
+	bool revealed; // The player has seen this tile.
+	bool visible;  // The player can see this tile right now.
+	char symbol;   // The symbol to display for this tile.
 };
 
 struct Room{

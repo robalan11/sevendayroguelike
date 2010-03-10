@@ -7,13 +7,10 @@
 #include "Game.h"
 
 Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_upstair_y(), 0, loc, parent) {
-    
+    walk_mode = TURNING;
 }
 
-Player::Player(int x, int y, float f, Level *loc, Game *parent) : Agent(x, y, f, loc, parent) {
-    
-}
-
+//Get input from the keyboard and act on input.  Then recalculate player's fov.
 int Player::take_turn() {
     int input;
     input = getch();
@@ -51,6 +48,9 @@ int Player::take_turn() {
 		case 'k':
 			use();
 			break;
+		case '/':
+            toggle_walk_mode();
+            break;
         default:
             break;
     }
@@ -59,28 +59,21 @@ int Player::take_turn() {
     return input;
 }
 
-/*
-int Player::calculate_visibility() {
-    location->clear_visibility();
-	for (int i = -vision; i <= vision; i++) {
-		for (int j = -vision; j <= vision; j++) {
-			if (position.x+i >= map_width || position.y+j >= map_height ||
-				position.x+i < 0 || position.y+j < 0) continue;
-
-			float angle = atan2(float(j),float(i));
-			if (angle < 0) angle += float(2*PI);
-			float anglediff = angle - facing;
-			if (anglediff > PI) anglediff -= float(2*PI);
-//			if (fabs(anglediff) > PI/3 && !(i==0 && j==0)) continue;
-
-			if (location->is_visible(position.x, position.y, position.x+i, position.y+j))
-				location->mark_visible(position.x+i, position.y+j);
-		}
-	}
-    return 0;
+int Player::walk(int x, int y) {
+    if(walk_mode == TURNING)
+        Agent::walk_turn(x, y);
+    else if(walk_mode == STRAFING)
+        Agent::walk(x, y);
 }
-*/
 
+void Player::toggle_walk_mode() {
+    if(walk_mode == TURNING)
+        walk_mode = STRAFING;
+    else if(walk_mode == STRAFING)
+        walk_mode = TURNING;
+}
+
+//Calculate FOV as for any agent, then update the map with this information.
 void Player::mutual_fov() {
     location->clear_visibility();
     Agent::mutual_fov();
@@ -92,6 +85,7 @@ void Player::mutual_fov() {
     }
 }
 
+//Use the thing where the player is standing: stairs...
 void Player::use() {
 	if (location->is_upstair(position.x, position.y)) {
 		if (game->ascend()) {
