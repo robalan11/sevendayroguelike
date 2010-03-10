@@ -52,6 +52,9 @@ void Game::play() {
             player->get_x_pos(), player->get_y_pos(), player->get_facing(), current_level);
         wrefresh(message_win);
         
+        wclear(stats_win);
+        wrefresh(stats_win);
+        
         refresh();
         input = player->take_turn(); 
     } while(input != 'Q');

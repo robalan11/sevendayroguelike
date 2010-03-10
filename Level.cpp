@@ -187,91 +187,8 @@ void Level::print() {
 	}
 }
 
-/*
 bool Level::is_visible(int x1, int y1, int x2, int y2) {
-	bool steep = abs(y2-y1) > abs(x2-x1);
-	float error = 0;
-	if (!steep) {
-		float derror = (float)(y2-y1)/(float)(x2-x1);
-		int y = y1;
-		int dx = x1 < x2 ? 1 : -1;
-		int dy = y1 < y2 ? 1 : -1;
-		for (int x = x1; abs(x-x2) > 0; x += dx) {
-			if (!is_walkable(x, y)) return false;
-			error += derror;
-			if (abs(error) > 0.5) {
-				y += dy;
-				error -= 1.0;
-			}
-		}
-	} else {
-		float derror = (float)(x2-x1)/(float)(y2-y1);
-		int x = x1;
-		int dx = x1 < x2 ? 1 : -1;
-		int dy = y1 < y2 ? 1 : -1;
-		for (int y = y1; abs(y-y2) > 0; y += dy) {
-			if (!is_walkable(x, y)) return false;
-			error += derror;
-			if (abs(error) > 0.5) {
-				x += dx;
-				error -= 1.0;
-			}
-		}
-	}
-	return true;
-}
-*/
-
-/*
-//Simplistic center-to-nearest-corner line of sight
-bool Level::is_visible(int x1, int y1, int x2, int y2) {
-    int delta_x = x2 - x1;
-    int delta_y = y2 - y1;
-    int sgn_x = delta_x > 0 ? 1 : -1;
-    int sgn_y = delta_y > 0 ? 1 : -1;
-    
-    if(delta_x == 0) {
-        for(int y = y1 + sgn_y; y != y2; y += sgn_y) {
-            if(is_sight_blocking(x1, y))
-                return false;
-        }
-    }
-    else if(delta_y == 0) {
-        for(int x = x1 + sgn_x; x != x2; x += sgn_x) {
-            if(is_sight_blocking(x, y1))
-                return false;
-        }
-    }
-    else {
-        float x = x1;
-        float y = y1;
-        x += 0.5;
-        y += 0.5;
-        float slope = (float)(y2-y) / (float)(x2-x);
-        float diff_x = sgn_x*floor(sgn_x*x + 1)-x;
-        float diff_y = sgn_y*floor(sgn_y*y + 1)-y;
-        while(sgn_x*x < sgn_x*(float)x2) {
-            if(fabs(diff_y / diff_x) > fabs(slope)) {
-                x += diff_x;
-                y += slope * diff_x;
-            } else {
-                y += diff_y;
-                x += diff_y / slope;
-            }
-            if(is_sight_blocking((int)floor(x), (int)floor(y)))
-                return false;
-            float diff_x = sgn_x*floor(sgn_x*x + 1)-x;
-            float diff_y = sgn_y*floor(sgn_y*y + 1)-y;
-        }
-    }
-    
-    return true;
-}
-*/
-
-bool Level::is_visible(int x1, int y1, int x2, int y2) {
-    if(x1==x2 && y1==y2) return true;
-    else return !(obstructed(x1, y1, x2, y2) &&
+    return !(obstructed(x1, y1, x2, y2) &&
                 obstructed(x1+1, y1, x2, y2) &&
                 obstructed(x1, y1+1, x2, y2) &&
                 obstructed(x1+1, y1+1, x2, y2));
@@ -281,10 +198,10 @@ bool Level::obstructed(int x1, int y1, int x2, int y2) {
     int sgn_x = sgn(x2-x1);
     int sgn_y = sgn(y2-y1);
     
-    if(sgn_x == 1 && sgn_y == 1 && is_sight_blocking(x1+1, y1+1)) return true;
-    if(sgn_x == -1 && sgn_y == 1 && is_sight_blocking(x1-1, y1+1)) return true;
+    if(sgn_x == 1 && sgn_y == 1 && is_sight_blocking(x1, y1)) return true;
+    if(sgn_x == -1 && sgn_y == 1 && is_sight_blocking(x1-1, y1)) return true;
     if(sgn_x == -1 && sgn_y == -1 && is_sight_blocking(x1-1, y1-1)) return true;
-    if(sgn_x == 1 && sgn_y == -1 && is_sight_blocking(x1+1, y1-1)) return true;
+    if(sgn_x == 1 && sgn_y == -1 && is_sight_blocking(x1, y1-1)) return true;
     
     int delta_x = abs(x2 - x1);
     int delta_y = abs(y2 - y1);
@@ -306,6 +223,13 @@ bool Level::obstructed(int x1, int y1, int x2, int y2) {
                     return true;
             }
         }
+    } else {
+        if(sgn_y*delta_y == 1)
+            if(is_sight_blocking(x1, y1) || is_sight_blocking(x1-1, y1))
+                return true;
+        if(sgn_y*delta_y == -1)
+            if(is_sight_blocking(x1, y1-1) || is_sight_blocking(x1-1, y1-1))
+                return true;
     }
     
     if(delta_y != 0) {
@@ -324,6 +248,13 @@ bool Level::obstructed(int x1, int y1, int x2, int y2) {
                     return true;
             }
         }
+    } else {
+        if(sgn_x*delta_x == 1)
+            if(is_sight_blocking(x1, y1) || is_sight_blocking(x1, y1-1))
+                return true;
+        if(sgn_x*delta_x == -1)
+            if(is_sight_blocking(x1-1, y1) || is_sight_blocking(x1-1, y1-1))
+                return true;
     }
     
     return false;
