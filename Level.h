@@ -41,6 +41,8 @@ public:
 	bool is_downstair(int x, int y);
 	int get_upstair_x();
 	int get_upstair_y();
+	int get_downstair_x();
+	int get_downstair_y();
 
 private:
 	void generate();

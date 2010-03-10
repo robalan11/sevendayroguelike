@@ -11,8 +11,9 @@ class Player : public Agent {
     protected:
         
     public:
-        Player(Level *loc);
-        Player(int x, int y, float f, Level *loc);
+        Player(Level *loc, Game *parent);
+        Player(int x, int y, float f, Level *loc, Game *parent);
+		void use();
         int take_turn();
         void mutual_fov();
 };

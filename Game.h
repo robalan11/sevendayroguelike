@@ -12,10 +12,14 @@ class Game {
         ~Game();
         bool init_game();
         void play();
+		bool descend();
+		bool ascend();
     private:
         WINDOW *level_win, *message_win, *stats_win;
         Agent *player;
-        Level *current_level;
+		Level* floors[16];
+        int current_level;
+		int num_levels;
 };
 
 #endif

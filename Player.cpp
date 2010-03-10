@@ -4,12 +4,13 @@
 #include "Agent.h"
 #include "Player.h"
 #include "Level.h"
+#include "Game.h"
 
-Player::Player(Level *loc) : Agent(loc->get_upstair_x(), loc->get_upstair_y(), 0, loc) {
+Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_upstair_y(), 0, loc, parent) {
     
 }
 
-Player::Player(int x, int y, float f, Level *loc) : Agent(x, y, f, loc) {
+Player::Player(int x, int y, float f, Level *loc, Game *parent) : Agent(x, y, f, loc, parent) {
     
 }
 
@@ -42,11 +43,14 @@ int Player::take_turn() {
             walk(1, 1);
             break;
         case 'h':
-            turn(-PI/4);
+            turn(float(-PI/4));
             break;
         case ';':
-            turn(PI/4);
+            turn(float(PI/4));
             break;
+		case 'k':
+			use();
+			break;
         default:
             break;
     }
@@ -86,4 +90,19 @@ void Player::mutual_fov() {
         location->mark_visible(visible_corners[i].x, visible_corners[i].y-1);
         location->mark_visible(visible_corners[i].x-1, visible_corners[i].y-1);
     }
+}
+
+void Player::use() {
+	if (location->is_upstair(position.x, position.y)) {
+		if (game->ascend()) {
+			position.x = location->get_downstair_x();
+			position.y = location->get_downstair_y();
+		}
+	}
+	else if (location->is_downstair(position.x, position.y)) {
+		if (game->descend()) {
+			position.x = location->get_upstair_x();
+			position.y = location->get_upstair_y();
+		}
+	}
 }

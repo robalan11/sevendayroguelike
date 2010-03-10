@@ -3,12 +3,14 @@
 #include <curses.h>
 #include "Agent.h"
 #include "Level.h"
+#include "Game.h"
 
-Agent::Agent(int x, int y, float f, Level *loc) {
+Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
     position.x = x;
     position.y = y;
     facing = f;
     location = loc;
+	game = parent;
     
     speed = 1;
     vision = 10;
@@ -41,8 +43,8 @@ void Agent::walk_turn(int x, int y) {
 
 void Agent::turn(float angle) {
     facing += angle;
-    while(facing < -PI) facing += 2*PI;
-    while(facing >= PI) facing -= 2*PI;
+    while(facing < float(-PI)) facing += float(2*PI);
+    while(facing >= float(PI)) facing -= float(2*PI);
 }
 
 void Agent::face(float angle) {
@@ -80,8 +82,8 @@ void Agent::mutual_fov() {
 				position.x+x < 1 || position.y+y < 1) continue;
 			
 			//don't test squares outside sight radius
-			float xdist = x-0.5;
-			float ydist = y-0.5;
+			float xdist = float(x-0.5);
+			float ydist = float(y-0.5);
             if(sqrt((xdist*xdist)+(ydist*ydist)) > vision) continue;
             
             //add corner to the visible list if it is visible

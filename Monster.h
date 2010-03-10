@@ -11,7 +11,7 @@ class Monster : public Agent {
     protected:
         
     public:
-        Monster(int x, int y, float f, Level *loc);
+        Monster(int x, int y, float f, Level *loc, Game *parent);
         int take_turn();
 };
 

@@ -296,7 +296,7 @@ bool Level::obstructed(int x1, int y1, int x2, int y2) {
             ry = dx * delta_y % delta_x;
             x = x1 + dx * sgn_x;
             y = y1 + qy * sgn_y;
-            if(rx == 0) {
+            if(ry == 0) {
                 if(corner_obstructed(x, y, sgn_x, sgn_y))
                     return true;
             } else {
@@ -314,7 +314,7 @@ bool Level::obstructed(int x1, int y1, int x2, int y2) {
             rx = dy * delta_x % delta_y;
             y = y1 + dy * sgn_y;
             x = x1 + qx * sgn_x;
-            if(ry == 0) {
+            if(rx == 0) {
                 if(corner_obstructed(x, y, sgn_x, sgn_y))
                     return true;
             } else {
@@ -386,4 +386,12 @@ int Level::get_upstair_x() {
 
 int Level::get_upstair_y() {
     return upstair.y;
+}
+
+int Level::get_downstair_x() {
+    return downstair.x;
+}
+
+int Level::get_downstair_y() {
+    return downstair.y;
 }
