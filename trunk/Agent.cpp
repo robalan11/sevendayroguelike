@@ -13,7 +13,7 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
 	game = parent;
     
     speed = 1;
-    vision = 10;
+    vision = 8;
     
     visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
