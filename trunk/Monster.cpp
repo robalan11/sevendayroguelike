@@ -2,7 +2,7 @@
 #include "Monster.h"
 #include "Level.h"
 
-Monster::Monster(int x, int y, float f, Level *loc) : Agent(x, y, f, loc) {
+Monster::Monster(int x, int y, float f, Level *loc, Game *parent) : Agent(x, y, f, loc, parent) {
     
 }
 
