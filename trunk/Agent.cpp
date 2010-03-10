@@ -14,6 +14,7 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
     
     speed = 1;
     vision = 8;
+    fov_angle = PI/3;
     
     visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
@@ -41,17 +42,20 @@ void Agent::walk_turn(int x, int y) {
 	}
 }
 
+//The agent turns counterclockwise by an angle.
 void Agent::turn(float angle) {
     facing += angle;
     while(facing < float(-PI)) facing += float(2*PI);
     while(facing >= float(PI)) facing -= float(2*PI);
 }
 
+//The agent faces an angle, with 0 = North.
 void Agent::face(float angle) {
 	if (angle < 0) angle += float(2*PI);
 	facing = angle;
 }
 
+//Set the level the agent inhabits and set the agent's position in the level.
 void Agent::set_location(Level *loc) {
     location = loc;
 }
@@ -73,18 +77,25 @@ int Agent::take_turn() {
     return 0;
 }
 
+//Determine which squares this agent can see.
 void Agent::mutual_fov() {
     int i = 0;
     for(int y = -vision; y <= vision+1; y++) {
         for(int x = -vision; x <= vision+1; x++) {
-            //don't test squares off the map
+            //don't test points off the map
             if(position.x+x >= map_width || position.y+y >= map_height ||
 				position.x+x < 1 || position.y+y < 1) continue;
 			
-			//don't test squares outside sight radius
+			//don't test points outside sight radius
 			float xdist = float(x-0.5);
 			float ydist = float(y-0.5);
             if(sqrt((xdist*xdist)+(ydist*ydist)) > vision) continue;
+            
+            //don't test points outside sight cone
+            float anglediff = facing - atan2(y-0.5, x-0.5);
+            while(anglediff < -PI) anglediff += 2*PI;
+            while(anglediff >= PI) anglediff -= 2*PI;
+            if(fabs(anglediff) > fov_angle) continue;
             
             //add corner to the visible list if it is visible
             if(location->is_visible(position.x, position.y,

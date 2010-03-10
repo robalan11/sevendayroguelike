@@ -19,6 +19,7 @@ class Agent {
         int speed;         // Not sure what this means yet.
         int vision;        // Distance this agent can see.
                            // If this value changes, fov must be reallocated.
+        float fov_angle;    // How wide an angle the agent can see.
         Level *location;   // The level this agent currently inhabits.
 		Game *game;        // The game from which this agent was spawned
         int n_visible_corners;

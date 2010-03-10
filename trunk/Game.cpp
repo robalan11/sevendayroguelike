@@ -15,6 +15,7 @@ Game::~Game() {
     endwin();
 }
 
+//Initialize curses, colors, windows, and the game objects.
 bool Game::init_game() {
     initscr();
     start_color();
@@ -38,6 +39,7 @@ bool Game::init_game() {
     return TRUE;
 }
 
+//The main game loop.
 void Game::play() {
     player->mutual_fov();
     int input;
@@ -60,6 +62,7 @@ void Game::play() {
     } while(input != 'Q');
 }
 
+//Go down a stair.  Create a new level if there is none.
 bool Game::descend() {
 	if (current_level < 16) {
 		current_level++;
@@ -74,6 +77,7 @@ bool Game::descend() {
 	}
 }
 
+//Go up a stair.
 bool Game::ascend() {
 	if (current_level > 0) {
 		current_level--;

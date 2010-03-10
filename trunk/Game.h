@@ -16,10 +16,11 @@ class Game {
 		bool ascend();
     private:
         WINDOW *level_win, *message_win, *stats_win;
-        Agent *player;
-		Level* floors[16];
-        int current_level;
-		int num_levels;
+                             // curses windows for output.
+        Agent *player;       // The player.
+		Level* floors[16];   // The levels, with zero being the top.
+        int current_level;   // Index into floors array.
+		int num_levels;      // Number of levels already generated.
 };
 
 #endif
