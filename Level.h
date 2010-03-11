@@ -10,15 +10,23 @@ struct Position {
     int x, y;
 };
 
+class Agent;
+
 struct Tile{
 	bool revealed; // The player has seen this tile.
 	bool visible;  // The player can see this tile right now.
 	char symbol;   // The symbol to display for this tile.
+	Agent *agent;  // The agent at this tile, or NULL.
 };
 
 struct Room{
 	int left, right, top, bottom;
 	bool connected;
+};
+
+struct Agent_List {
+    Agent *agent;
+    Agent_List *next;
 };
 
 class Level{
@@ -29,8 +37,11 @@ public:
     void mark_visible(int x, int y);
     void clear_visibility();
 	void open_door(int x, int y);
+	void add_agent(Agent *agent, int x, int y);
+	void move_agent(int x1, int y1, int x2, int y2);
 
 	void print();
+	bool contains_agent(int x, int y);
 	bool is_visible(int x1, int y1, int x2, int y2);
 	bool is_walkable(int x, int y);
 	bool is_sight_blocking(int x, int y);
@@ -53,6 +64,7 @@ private:
 	bool corner_obstructed(int x, int y, int sgn_x, int sgn_y);
 
 	Tile map[map_width][map_height];
+	Agent_List *agents;
 	Room* rooms;
 	int numrooms;
 	Position upstair;

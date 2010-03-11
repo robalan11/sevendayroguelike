@@ -10,6 +10,8 @@
 
 Level::Level(WINDOW *win) {
 	generate();
+	agents = (Agent_List *)malloc(sizeof(Agent_List));
+	agents->next = NULL;
 	level_win = win;
 }
 
@@ -26,6 +28,7 @@ void Level::generate() {
 			map[i][j].symbol = ' ';
 			map[i][j].revealed = false;
 			map[i][j].visible = false;
+			map[i][j].agent = NULL;
 		}
 	}
 
@@ -174,6 +177,23 @@ void Level::open_door(int x, int y) {
 		map[x][y].symbol = '/';
 }
 
+void Level::add_agent(Agent *agent, int x, int y) {
+    map[x][y].agent = agent;
+    Agent_List *l = agents;
+    while(l->next) l = l->next;
+    Agent_List *new_agent = (Agent_List *)malloc(sizeof(Agent_List));
+    new_agent->agent = agent;
+    new_agent->next = NULL;
+    l->next = new_agent;
+}
+
+void Level::move_agent(int x1, int y1, int x2, int y2) {
+    if((map[x1][y1].agent != NULL) && (map[x2][y2].agent == NULL)) {
+        map[x2][y2].agent = map[x1][y1].agent;
+        map[x1][y1].agent = NULL;
+    }
+}
+
 void Level::print() {
 	for (int j = 0; j < map_height; j++) {
 		for (int i = 0; i < map_width; i++) {
@@ -185,6 +205,10 @@ void Level::print() {
             }
 		}
 	}
+}
+
+bool Level::contains_agent(int x, int y) {
+    return (map[x][y].agent != NULL);
 }
 
 bool Level::is_visible(int x1, int y1, int x2, int y2) {
