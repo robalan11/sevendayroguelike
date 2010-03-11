@@ -13,12 +13,13 @@ struct Position {
     int x, y;
 };
 
+class Item;
 struct Tile{
 	bool revealed; // The player has seen this tile.
 	bool visible;  // The player can see this tile right now.
 	int symbol;    // The symbol to display for this tile.
 	Agent *agent;  // The agent at this tile, or NULL.
-	//items
+	Item *stuff;    // The item that is dropped in the tile, or NULL.
 };
 
 struct Room{
