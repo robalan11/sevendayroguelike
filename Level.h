@@ -6,17 +6,19 @@
 #define map_width 80
 #define map_height 30
 
+class Agent;
+class Game;
+
 struct Position {
     int x, y;
 };
 
-class Agent;
-
 struct Tile{
 	bool revealed; // The player has seen this tile.
 	bool visible;  // The player can see this tile right now.
-	char symbol;   // The symbol to display for this tile.
+	int symbol;    // The symbol to display for this tile.
 	Agent *agent;  // The agent at this tile, or NULL.
+	//items
 };
 
 struct Room{
@@ -31,17 +33,23 @@ struct Agent_List {
 
 class Level{
 public:
-	Level(WINDOW *win);
+	Level(WINDOW *win, Game *parent);
 	~Level();
 
     void mark_visible(int x, int y);
     void clear_visibility();
+    
 	void open_door(int x, int y);
-	void add_agent(Agent *agent, int x, int y);
+	void monsters_take_turns();
+	
+	void add_agent(Agent *agent);
+	void remove_agent(Agent *agent);
 	void move_agent(int x1, int y1, int x2, int y2);
+	void spawn_monster(int monster_type);
 
 	void print();
 	bool contains_agent(int x, int y);
+	Agent *agent_at(int x, int y);
 	bool is_visible(int x1, int y1, int x2, int y2);
 	bool is_walkable(int x, int y);
 	bool is_sight_blocking(int x, int y);
@@ -64,6 +72,7 @@ private:
 	bool corner_obstructed(int x, int y, int sgn_x, int sgn_y);
 
 	Tile map[map_width][map_height];
+	Game *game;
 	Agent_List *agents;
 	Room* rooms;
 	int numrooms;
