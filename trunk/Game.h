@@ -14,6 +14,7 @@ class Game {
         void play();
 		bool descend();
 		bool ascend();
+		void write_message(const char *msg);
     private:
         WINDOW *level_win, *message_win, *stats_win;
                              // curses windows for output.

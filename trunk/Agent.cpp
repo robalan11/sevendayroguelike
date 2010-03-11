@@ -10,6 +10,7 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
     position.y = y;
     facing = f;
     location = loc;
+    location->add_agent(this, position.x, position.y);
 	game = parent;
     
     speed = 1;
@@ -22,8 +23,12 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
 //The agent moves in the specified direction and keeps its facing.
 void Agent::walk(int x, int y) {
     if(location->is_walkable(position.x+x, position.y+y)) {
-        position.x += x;
-        position.y += y;
+        if(location->contains_agent(position.x+x, position.y+y)) {
+            //attack it if visible
+        }
+        else {
+            set_position(position.x+x, position.y+y);
+        }
     }
     else if(location->is_closed_door(position.x+x, position.y+y)) {
         location->open_door(position.x+x, position.y+y);
@@ -34,12 +39,22 @@ void Agent::walk(int x, int y) {
 void Agent::walk_turn(int x, int y) {
 	face(atan2(float(y), float(x)));
     if(location->is_walkable(position.x+x, position.y+y)) {
-        position.x += x;
-        position.y += y;
+        if(location->contains_agent(position.x+x, position.y+y)) {
+            //attack it if visible?
+        }
+        else {
+            set_position(position.x+x, position.y+y);
+        }
     }
 	else if(location->is_closed_door(position.x+x, position.y+y)) {
 		location->open_door(position.x+x, position.y+y);
 	}
+}
+
+void Agent::set_position(int x, int y) {
+    location->move_agent(position.x, position.y, x, y);
+    position.x = x;
+    position.y = y;
 }
 
 //The agent turns counterclockwise by an angle.

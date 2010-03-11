@@ -8,58 +8,65 @@
 
 Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_upstair_y(), 0, loc, parent) {
     walk_mode = TURNING;
+    init_keys();
+}
+
+void Player::init_keys() {
+    default_keys();
+}
+
+void Player::default_keys() {
+    keys.walk_west = 'j';
+    keys.walk_east = 'l';
+    keys.walk_north = 'i';
+    keys.walk_south = ',';
+    keys.walk_nw = 'u';
+    keys.walk_ne = 'o';
+    keys.walk_sw = 'm';
+    keys.walk_se = '.';
+    keys.turn_left = 'h';
+    keys.turn_right = ';';
+    keys.use = 'k';
+    keys.change_walk_mode = '/';
 }
 
 //Get input from the keyboard and act on input.  Then recalculate player's fov.
 int Player::take_turn() {
     int input;
     input = getch();
-    switch(input) {
-        case 'j':
-            walk(-1, 0);
-            break;
-        case 'l':
-            walk(1, 0);
-            break;
-        case 'i':
-            walk(0, -1);
-            break;
-        case ',':
-            walk(0, 1);
-            break;
-        case 'u':
-            walk(-1, -1);
-            break;
-        case 'm':
-            walk(-1, 1);
-            break;
-        case 'o':
-            walk(1, -1);
-            break;
-        case '.':
-            walk(1, 1);
-            break;
-        case 'h':
-            turn(float(-PI/4));
-            break;
-        case ';':
-            turn(float(PI/4));
-            break;
-		case 'k':
-			use();
-			break;
-		case '/':
-            toggle_walk_mode();
-            break;
-        default:
-            break;
+    if(input == keys.walk_west) 
+        walk(-1, 0);
+    else if(input == keys.walk_east)
+        walk(1, 0);
+    else if(input == keys.walk_north)
+        walk(0, -1);
+    else if(input == keys.walk_south)
+        walk(0, 1);
+    else if(input == keys.walk_nw)
+        walk(-1, -1);
+    else if(input == keys.walk_sw)
+        walk(-1, 1);
+    else if(input == keys.walk_ne)
+        walk(1, -1);
+    else if(input == keys.walk_se)
+        walk(1, 1);
+    else if(input ==  keys.turn_left)
+        turn(float(-PI/4));
+    else if(input ==  keys.turn_right)
+        turn(float(PI/4));
+	else if(input ==  keys.use)
+		use();
+	else if(input ==  keys.change_walk_mode)
+        toggle_walk_mode();
+    else {
+        
     }
     
     mutual_fov();
     return input;
 }
 
-int Player::walk(int x, int y) {
+void Player::walk(int x, int y) {
     if(walk_mode == TURNING)
         Agent::walk_turn(x, y);
     else if(walk_mode == STRAFING)

@@ -14,12 +14,18 @@ class Game;
 
 class Agent {
     protected:
+        int ID;
+        
+        int hp, max_hp;
+        int attack, ranged_accuracy;
+        
         Position position; // Position in the level.
         float facing;      // Facing direction: 0=North.
         int speed;         // Not sure what this means yet.
         int vision;        // Distance this agent can see.
                            // If this value changes, fov must be reallocated.
-        float fov_angle;    // How wide an angle the agent can see.
+        float fov_angle;   // How wide an angle the agent can see.
+        
         Level *location;   // The level this agent currently inhabits.
 		Game *game;        // The game from which this agent was spawned
         int n_visible_corners;
@@ -27,6 +33,8 @@ class Agent {
         Position *visible_corners;
                            // Array of points the agent can see.
                            // Must be reallocated if vision range changes.
+        
+        void set_position(int x, int y);
         
     public:
         Agent(int x, int y, float f, Level *loc, Game *parent);

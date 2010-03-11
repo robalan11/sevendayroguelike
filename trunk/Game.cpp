@@ -50,11 +50,11 @@ void Game::play() {
         wrefresh(level_win);
         
         wclear(message_win);
-        mvwprintw(message_win, 0, 0, "Player at x:%i, y:%i, facing:%f.  Floor %i",
-            player->get_x_pos(), player->get_y_pos(), player->get_facing(), current_level);
         wrefresh(message_win);
         
         wclear(stats_win);
+        mvwprintw(stats_win, 0, 0, "Player at x:%i, y:%i, facing:%f.  Floor %i",
+            player->get_x_pos(), player->get_y_pos(), player->get_facing(), current_level);
         wrefresh(stats_win);
         
         refresh();
@@ -86,4 +86,8 @@ bool Game::ascend() {
 	} else {
 		return false;
 	}
+}
+
+void Game::write_message(const char *msg) {
+    wprintw(message_win, "%s", msg);
 }
