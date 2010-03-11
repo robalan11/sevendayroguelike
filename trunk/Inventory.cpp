@@ -1,9 +1,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "Inventory.h"
+#include "Player.h"
 
-Inventory::Inventory(int difficulty, WINDOW *inventory_window) {
+Inventory::Inventory(int difficulty, WINDOW *inventory_window, Player *player) {
 	window = inventory_window;
+	parent = player;
 	num_drinks = 0;
 	num_ammos = 0;
 	num_rangeds = 0;
@@ -23,52 +25,22 @@ Inventory::Inventory(int difficulty, WINDOW *inventory_window) {
 		Drink *wine = new Drink("Wine");
 		Drink *shot = new Drink("Shot");
 		Drink *martini = new Drink("Martini");
-		add_item(*beer);
-		add_item(*beer);
-		add_item(*beer);
-		add_item(*wine);
-		add_item(*martini);
-		add_item(*shot);
-		add_item(*wine);
+		add_item(beer);
+		add_item(beer);
+		add_item(beer);
+		add_item(wine);
+		add_item(martini);
+		add_item(shot);
+		add_item(wine);
 	}
 }
 
-void Inventory::add_item(Item new_item) {
-	int *num_things;
-	Item *list;
-	switch (new_item.get_type()) {
-		case DRINK:
-			num_things = &num_drinks;
-			list = drinks;
-			break;
-		case AMMO:
-			num_things = &num_ammos;
-			list = ammos;
-			break;
-		case MELEE:
-			num_things = &num_melees;
-			list = melees;
-			break;
-		case RANGED:
-			num_things = &num_rangeds;
-			list = rangeds;
-			break;
-		case SUIT:
-			num_things = &num_suits;
-			list = suits;
-			break;
-		case HAT:
-			num_things = &num_hats;
-			list = hats;
-			break;
-		default:
-			num_things = NULL;
-			list = NULL;
-			break;
-	}
+void Inventory::add_item(Item *new_item) {
+	select_category(new_item->get_type());
+
 	for (int i=0; i < *num_things; i++) {
-		if (!strcmp(list[i].get_name(), new_item.get_name())) {
-			list[i].add_more(new_item.get_quantity());
+		if (!strcmp(list[i]->get_name(), new_item->get_name())) {
+			list[i]->add_more(new_item->get_quantity());
 			return;
 		}
 	}	
@@ -95,6 +67,10 @@ void Inventory::open() {
 			category--;
 			if (category < 0) category = 5;
 			selected = 0;
+		}
+		else if (input == 'k') {
+			select_category(category);
+			list[selected]->use(this);
 		}
 	}
 	wclear(window);
@@ -126,9 +102,24 @@ void Inventory::display() {
 	}
 
 	// Draw the active category
-	int *num_things;
-	Item *list;
-	switch (category) {
+	select_category(category);
+	char num[2];
+	for (int i = 0; i < *num_things; i++) {
+		_itoa_s(i+1, num, 10);
+		if (i == selected) 
+			wattron(window, A_REVERSE);
+		mvwprintw(window, 5 + i, 5, "%2i", i+1);
+
+		wattroff(window, A_REVERSE);
+		mvwprintw(window, 5 + i, 8, "%i %s - %s",
+			list[i]->get_quantity(), list[i]->get_name(), list[i]->get_description());
+	}
+
+	wrefresh(window);
+}
+
+void Inventory::select_category(int type) {
+	switch (type) {
 		case DRINK:
 			num_things = &num_drinks;
 			list = drinks;
@@ -158,17 +149,4 @@ void Inventory::display() {
 			list = NULL;
 			break;
 	}
-	char num[2];
-	for (int i = 0; i < *num_things; i++) {
-		_itoa_s(i+1, num, 10);
-		if (i == selected) 
-			wattron(window, A_REVERSE);
-		mvwprintw(window, 5 + i, 5, "%2i", i+1);
-
-		wattroff(window, A_REVERSE);
-		mvwprintw(window, 5 + i, 8, "%i %s - %s",
-			list[i].get_quantity(), list[i].get_name(), list[i].get_description());
-	}
-
-	wrefresh(window);
 }

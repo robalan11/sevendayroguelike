@@ -42,6 +42,7 @@ class Agent {
         void walk_turn(int x, int y);
         void attack(Agent *enemy);
         void lose_hp(int hurt);
+		void gain_hp(int heal);
         void turn(float angle);
 		void face(float angle);
         void set_location(Level *loc);

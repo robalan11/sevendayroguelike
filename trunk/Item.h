@@ -11,6 +11,8 @@
 #define SUIT 4
 #define HAT 5
 
+class Inventory;
+
 class Item {
 	protected:
 		char symbol;
@@ -27,6 +29,8 @@ class Item {
 		char* get_name() { return name; }
 		char* get_description() { return description; }
 		int get_quantity() { return quantity; }
+
+		virtual void use(Inventory *parent) { }
 };
 
 #endif

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Consumable.h"
+#include "Inventory.h"
+#include "Player.h"
 
 Drink::Drink(int min, int max, char *_name, char *_desc) {
 	init(min, max, _name, _desc);
@@ -27,6 +29,6 @@ void Drink::init(int min, int max, char *_name, char *_desc) {
 	strcpy_s(description, _desc);
 }
 
-int Drink::drink() {
-	return rand()%(max_heal-min_heal) + min_heal;
+void Drink::use(Inventory *parent) {
+	parent->get_player()->gain_hp(rand()%(max_heal-min_heal) + min_heal);
 }
