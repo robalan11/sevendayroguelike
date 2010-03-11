@@ -5,6 +5,7 @@
 #include "Agent.h"
 #include "Monster.h"
 #include "Level.h"
+#include "Item.h"
 
 #define min(x, y) ((x>y)?y:x)
 #define max(x, y) ((x>y)?x:y)
@@ -35,6 +36,7 @@ void Level::generate() {
 			map[i][j].revealed = false;
 			map[i][j].visible = false;
 			map[i][j].agent = NULL;
+			map[i][j].stuff = NULL;
 		}
 	}
 

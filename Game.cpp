@@ -26,10 +26,13 @@ bool Game::init_game() {
     curs_set(0);
     init_pair(0, COLOR_WHITE, COLOR_BLACK);
     init_pair(1, COLOR_RED, COLOR_BLACK);
+	init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(3, COLOR_BLACK, COLOR_WHITE);
     
     message_win = subwin(stdscr, 2, 80, 0, 1);
     level_win = subwin(stdscr, 30, 80, 2, 1);
     stats_win = subwin(stdscr, 3, 80, 32, 1);
+	inventory_win = newwin(0, 0, 0, 0);
     
     floors[0] = new Level(level_win, this);
 	current_level = 0;

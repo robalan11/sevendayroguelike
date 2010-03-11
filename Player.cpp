@@ -14,6 +14,7 @@ Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_
     attack_strength = 2;
     ranged_accuracy = 5;
     init_keys();
+	inventory = new Inventory(0, game->get_inventory_win());
 }
 
 void Player::init_keys() {
@@ -33,6 +34,7 @@ void Player::default_keys() {
     keys.turn_right = ';';
     keys.use = 'k';
     keys.change_walk_mode = '/';
+	keys.inventory = 's';
 }
 
 //Get input from the keyboard and act on input.  Then recalculate player's fov.
@@ -55,14 +57,16 @@ int Player::take_turn() {
         walk(1, -1);
     else if(input == keys.walk_se)
         walk(1, 1);
-    else if(input ==  keys.turn_left)
+    else if(input == keys.turn_left)
         turn(float(-PI/4));
-    else if(input ==  keys.turn_right)
+    else if(input == keys.turn_right)
         turn(float(PI/4));
-	else if(input ==  keys.use)
+	else if(input == keys.use)
 		use();
-	else if(input ==  keys.change_walk_mode)
+	else if(input == keys.change_walk_mode)
         toggle_walk_mode();
+	else if(input == keys.inventory)
+		inventory->open();
     else {
         
     }
