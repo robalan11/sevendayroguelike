@@ -7,7 +7,12 @@
 #include "Game.h"
 
 Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_upstair_y(), 0, loc, parent) {
+    is_player = true;
     walk_mode = TURNING;
+    symbol = '@';
+    hp = max_hp = 20;
+    attack_strength = 2;
+    ranged_accuracy = 5;
     init_keys();
 }
 
@@ -96,14 +101,14 @@ void Player::mutual_fov() {
 void Player::use() {
 	if (location->is_upstair(position.x, position.y)) {
 		if (game->ascend()) {
-			position.x = location->get_downstair_x();
-			position.y = location->get_downstair_y();
+            set_position(location->get_downstair_x(), location->get_downstair_y());
+            location->add_agent(this);
 		}
 	}
 	else if (location->is_downstair(position.x, position.y)) {
 		if (game->descend()) {
-			position.x = location->get_upstair_x();
-			position.y = location->get_upstair_y();
+            set_position(location->get_upstair_x(), location->get_upstair_y());
+            location->add_agent(this);
 		}
 	}
 }

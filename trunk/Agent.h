@@ -14,13 +14,13 @@ class Game;
 
 class Agent {
     protected:
-        int ID;
+        unsigned int symbol;
         
         int hp, max_hp;
-        int attack, ranged_accuracy;
+        int attack_strength, ranged_accuracy;
         
         Position position; // Position in the level.
-        float facing;      // Facing direction: 0=North.
+        float facing;      // Facing direction: 0=East.
         int speed;         // Not sure what this means yet.
         int vision;        // Distance this agent can see.
                            // If this value changes, fov must be reallocated.
@@ -40,6 +40,8 @@ class Agent {
         Agent(int x, int y, float f, Level *loc, Game *parent);
         void walk(int x, int y);
         void walk_turn(int x, int y);
+        void attack(Agent *enemy);
+        void lose_hp(int hurt);
         void turn(float angle);
 		void face(float angle);
         void set_location(Level *loc);
@@ -47,9 +49,15 @@ class Agent {
         int get_x_pos();
         int get_y_pos();
         float get_facing();
+        int get_symbol();
+        
+        int get_hp();
+        int get_max_hp();
         
         virtual int take_turn();
         virtual void mutual_fov();
+        
+        bool is_player;
 };
 
 #endif

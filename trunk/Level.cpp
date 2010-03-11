@@ -2,17 +2,23 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include "Agent.h"
+#include "Monster.h"
 #include "Level.h"
 
 #define min(x, y) ((x>y)?y:x)
 #define max(x, y) ((x>y)?x:y)
 #define sgn(x) ((x==0)?0:((x>0)?1:-1))
 
-Level::Level(WINDOW *win) {
+class Game;
+
+Level::Level(WINDOW *win, Game *parent) {
 	generate();
 	agents = (Agent_List *)malloc(sizeof(Agent_List));
 	agents->next = NULL;
 	level_win = win;
+	game = parent;
+	spawn_monster(DOG);
 }
 
 Level::~Level() {}
@@ -177,14 +183,36 @@ void Level::open_door(int x, int y) {
 		map[x][y].symbol = '/';
 }
 
-void Level::add_agent(Agent *agent, int x, int y) {
-    map[x][y].agent = agent;
+void Level::monsters_take_turns() {
+    Agent_List *l = agents;
+    while(l->next) {
+        if(!l->next->agent->is_player) {
+            l->next->agent->take_turn();
+        }
+        l = l->next;
+    }
+}
+
+void Level::add_agent(Agent *agent) {
+    map[agent->get_x_pos()][agent->get_y_pos()].agent = agent;
     Agent_List *l = agents;
     while(l->next) l = l->next;
     Agent_List *new_agent = (Agent_List *)malloc(sizeof(Agent_List));
     new_agent->agent = agent;
     new_agent->next = NULL;
     l->next = new_agent;
+}
+
+void Level::remove_agent(Agent *agent) {
+    Agent_List *l = agents;
+    while(l != NULL) {
+        if(l->next->agent == agent) {
+            l->next = l->next->next;
+            break;
+        }
+        l = l->next;
+    }
+    map[agent->get_x_pos()][agent->get_y_pos()].agent = NULL;
 }
 
 void Level::move_agent(int x1, int y1, int x2, int y2) {
@@ -194,14 +222,35 @@ void Level::move_agent(int x1, int y1, int x2, int y2) {
     }
 }
 
+void Level::spawn_monster(int monster_type) {
+    bool placed = false;
+    while(!placed) {
+        int x = rand() % map_width;
+        int y = rand() % map_height;
+        if(!is_walkable(x, y))
+            continue;
+        if(contains_agent(x, y))
+            continue;
+        Agent *new_monster = new Monster(x, y, 0, this, game, monster_type);
+        add_agent(new_monster);
+        placed = true;
+    }
+}
+
 void Level::print() {
 	for (int j = 0; j < map_height; j++) {
 		for (int i = 0; i < map_width; i++) {
             if(map[i][j].revealed) {
                 if(map[i][j].visible)
-                    mvwaddch(level_win, j, i, map[i][j].symbol | COLOR_PAIR(0));
+                    if(map[i][j].agent == NULL)
+                        mvwaddch(level_win, j, i,
+                            map[i][j].symbol | COLOR_PAIR(0));
+                    else
+                        mvwaddch(level_win, j, i,
+                            map[i][j].agent->get_symbol() | COLOR_PAIR(0));
                 else
-                    mvwaddch(level_win, j, i, map[i][j].symbol | COLOR_PAIR(1));
+                    mvwaddch(level_win, j, i,
+                        map[i][j].symbol | COLOR_PAIR(1));
             }
 		}
 	}
@@ -209,6 +258,10 @@ void Level::print() {
 
 bool Level::contains_agent(int x, int y) {
     return (map[x][y].agent != NULL);
+}
+
+Agent *Level::agent_at(int x, int y) {
+    return map[x][y].agent;
 }
 
 bool Level::is_visible(int x1, int y1, int x2, int y2) {

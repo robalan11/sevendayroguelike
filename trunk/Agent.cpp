@@ -10,7 +10,6 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
     position.y = y;
     facing = f;
     location = loc;
-    location->add_agent(this, position.x, position.y);
 	game = parent;
     
     speed = 1;
@@ -24,9 +23,12 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
 void Agent::walk(int x, int y) {
     if(location->is_walkable(position.x+x, position.y+y)) {
         if(location->contains_agent(position.x+x, position.y+y)) {
-            //attack it if visible
+            //if visible
+            attack(location->agent_at(position.x+x, position.y+y));
         }
         else {
+            location->move_agent(position.x, position.y,
+                position.x+x, position.y+y);
             set_position(position.x+x, position.y+y);
         }
     }
@@ -40,9 +42,12 @@ void Agent::walk_turn(int x, int y) {
 	face(atan2(float(y), float(x)));
     if(location->is_walkable(position.x+x, position.y+y)) {
         if(location->contains_agent(position.x+x, position.y+y)) {
-            //attack it if visible?
+            //if visible
+            attack(location->agent_at(position.x+x, position.y+y));
         }
         else {
+            location->move_agent(position.x, position.y,
+                position.x+x, position.y+y);
             set_position(position.x+x, position.y+y);
         }
     }
@@ -51,8 +56,15 @@ void Agent::walk_turn(int x, int y) {
 	}
 }
 
+void Agent::attack(Agent *enemy) {
+    enemy->lose_hp(attack_strength);
+}
+
+void Agent::lose_hp(int hurt) {
+    hp -= hurt;
+}
+
 void Agent::set_position(int x, int y) {
-    location->move_agent(position.x, position.y, x, y);
     position.x = x;
     position.y = y;
 }
@@ -70,7 +82,7 @@ void Agent::face(float angle) {
 	facing = angle;
 }
 
-//Set the level the agent inhabits and set the agent's position in the level.
+//Set the level the agent inhabits.
 void Agent::set_location(Level *loc) {
     location = loc;
 }
@@ -85,6 +97,18 @@ int Agent::get_y_pos() {
 
 float Agent::get_facing() {
     return facing;
+}
+
+int Agent::get_symbol() {
+    return symbol;
+}
+
+int Agent::get_hp() {
+    return hp;
+}
+
+int Agent::get_max_hp() {
+    return max_hp;
 }
 
 int Agent::take_turn() {
