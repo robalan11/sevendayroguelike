@@ -15,7 +15,7 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
     
     speed = 1;
     vision = 8;
-    fov_angle = PI/3;
+    fov_angle = float(PI/3);
     
     visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
@@ -107,9 +107,9 @@ void Agent::mutual_fov() {
             if(sqrt((xdist*xdist)+(ydist*ydist)) > vision) continue;
             
             //don't test points outside sight cone
-            float anglediff = facing - atan2(y-0.5, x-0.5);
-            while(anglediff < -PI) anglediff += 2*PI;
-            while(anglediff >= PI) anglediff -= 2*PI;
+            float anglediff = float(facing - atan2(y-0.5, x-0.5));
+            while(anglediff < -PI) anglediff += float(2*PI);
+            while(anglediff >= PI) anglediff -= float(2*PI);
             if(fabs(anglediff) > fov_angle) continue;
             
             //add corner to the visible list if it is visible

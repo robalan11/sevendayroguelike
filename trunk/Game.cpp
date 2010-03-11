@@ -64,7 +64,7 @@ void Game::play() {
 
 //Go down a stair.  Create a new level if there is none.
 bool Game::descend() {
-	if (current_level < 16) {
+	if (current_level < 15) {
 		current_level++;
 		if (current_level >= num_levels) {
 			floors[current_level] = new Level(level_win);
