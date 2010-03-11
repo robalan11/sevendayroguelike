@@ -3,12 +3,7 @@
 #include "Consumable.h"
 
 Drink::Drink(int min, int max, char *_name, char *_desc) {
-	symbol = '!';
-	quantity = 1;
-	min_heal = min;
-	max_heal = max;
-	strcpy(name, _name);
-	strcpy(description, _desc);
+	init(min, max, _name, _desc);
 }
 
 Drink::Drink(char *desc) {
@@ -24,11 +19,12 @@ Drink::Drink(char *desc) {
 
 void Drink::init(int min, int max, char *_name, char *_desc) {
 	symbol = '!';
+	type = DRINK;
 	quantity = 1;
 	min_heal = min;
 	max_heal = max;
-	strcpy(name, _name);
-	strcpy(description, _desc);
+	strcpy_s(name, _name);
+	strcpy_s(description, _desc);
 }
 
 int Drink::drink() {

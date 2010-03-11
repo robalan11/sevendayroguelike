@@ -12,9 +12,16 @@
 class Inventory {
 	protected:
 		WINDOW *window;
-		Item items[64];
-		int num_items;
+		Item drinks[8];
+		Item ammos[16];
+		Item rangeds[16];
+		Item melees[16];
+		Item suits[16];
+		Item hats[16];
+		int num_drinks, num_ammos, num_rangeds, num_melees, num_suits, num_hats;
 		int selected;
+		char* categories[6];
+		int category;
 		Equipment *current_weapon;
 		Equipment *current_suit;
 		Equipment *current_hat;
