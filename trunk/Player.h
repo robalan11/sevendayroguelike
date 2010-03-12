@@ -19,11 +19,12 @@ class Player : public Agent {
             int walk_west, walk_east, walk_north, walk_south,
                     walk_ne, walk_nw, walk_se, walk_sw,
                     turn_left, turn_right, use, change_walk_mode,
-					inventory;
+					inventory, close;
         } keys;
         void init_keys();
         void default_keys();
 		void die();
+		void close_door();
 		
 		int get_melee_damage();
 		int get_ranged_damage();

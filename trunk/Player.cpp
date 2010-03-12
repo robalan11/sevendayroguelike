@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <curses.h>
 #include "Agent.h"
@@ -35,10 +36,104 @@ void Player::default_keys() {
     keys.use = 'k';
     keys.change_walk_mode = '/';
 	keys.inventory = 's';
+	keys.close = 'c';
 }
 
 void Player::die() {
     
+}
+
+void Player::close_door() {
+    int n_open_doors = 0;
+    Position door;
+    for(int y = -1; y <= 1; y++)
+        for(int x = -1; x <= 1; x++)
+            if(x != 0 || y != 0)
+                if(location->is_open_door(position.x+x, position.y+y)) {
+                    n_open_doors++;
+                    door.x = position.x+x;
+                    door.y = position.y+y;
+                }
+    int result;
+    #define NO_DOORS 0
+    #define NO_DOOR_THAT_DIRECTION 1
+    #define DOOR_OBSTRUCTED 2
+    #define DOOR_CLOSED_ALREADY 3
+    #define DOOR_CLOSE_SUCCESS 4
+    if(n_open_doors == 0) {
+        result = NO_DOORS;
+    }
+    else if(n_open_doors == 1) {
+        if(location->close_door(door.x, door.y))
+            result = DOOR_CLOSE_SUCCESS;
+        else
+            result = DOOR_OBSTRUCTED;
+    } else {
+        bool input_ok;
+        game->write_message("Close a door in what direction?");
+        do {
+            input_ok = true;
+            int input = getch();
+            if(input == keys.walk_west) {
+                door.x = position.x-1;
+                door.y = position.y;
+            } else if(input == keys.walk_east) {
+                door.x = position.x+1;
+                door.y = position.y;
+            } else if(input == keys.walk_north) {
+                door.x = position.x;
+                door.y = position.y-1;
+            } else if(input == keys.walk_south) {
+                door.x = position.x;
+                door.y = position.y+1;
+            } else if(input == keys.walk_nw) {
+                door.x = position.x-1;
+                door.y = position.y-1;
+            } else if(input == keys.walk_sw) {
+                door.x = position.x-1;
+                door.y = position.y+1;
+            } else if(input == keys.walk_ne) {
+                door.x = position.x+1;
+                door.y = position.y-1;
+            } else if(input == keys.walk_se) {
+                door.x = position.x+1;
+                door.y = position.y+1;
+            } else {
+                input_ok = false;
+                game->write_message("I didn't catch that.  What direction?");
+            }
+        } while(!input_ok);
+        if(location->close_door(door.x, door.y))
+            result = DOOR_CLOSE_SUCCESS;
+        else if(location->is_closed_door(door.x, door.y))
+            result = DOOR_CLOSED_ALREADY;
+        else if(location->is_open_door(door.x, door.y))
+            result = DOOR_OBSTRUCTED;
+        else
+            result = NO_DOOR_THAT_DIRECTION;
+    }
+    char msg[80] = "";
+    switch(result) {
+        case NO_DOORS:
+            strcat(msg, "There are no doors you can close.");
+            break;
+        case NO_DOOR_THAT_DIRECTION:
+            strcat(msg, "There is no door in that direction.");
+            break;
+        case DOOR_OBSTRUCTED:
+            strcat(msg, "You try to close a door, but there something in the way.");
+            break;
+        case DOOR_CLOSED_ALREADY:
+            strcat(msg, "That door is already closed.");
+            break;
+        case DOOR_CLOSE_SUCCESS:
+            strcat(msg, "You close a door.");
+            break;
+        default:
+            strcat(msg, "yay?");
+            break;
+    }
+    game->write_message(msg);
 }
 
 int Player::get_melee_damage() {
@@ -80,6 +175,8 @@ int Player::take_turn() {
         toggle_walk_mode();
 	else if(input == keys.inventory)
 		inventory->open();
+	else if(input == keys.close)
+        close_door();
     else {
         
     }
