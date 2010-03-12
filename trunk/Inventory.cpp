@@ -3,7 +3,7 @@
 #include "Inventory.h"
 #include "Player.h"
 
-Inventory::Inventory(int difficulty, WINDOW *inventory_window, Player *player) {
+Inventory::Inventory(WINDOW *inventory_window, Player *player) {
 	window = inventory_window;
 	parent = player;
 	num_drinks = 0;
@@ -20,19 +20,26 @@ Inventory::Inventory(int difficulty, WINDOW *inventory_window, Player *player) {
 	categories[3] = "Ranged";
 	categories[4] = "Suits";
 	categories[5] = "Hats";
-	if (difficulty == 0) {
-		Drink *beer = new Drink("Beer");
-		Drink *wine = new Drink("Wine");
-		Drink *shot = new Drink("Shot");
-		Drink *martini = new Drink("Martini");
-		add_item(beer);
-		add_item(beer);
-		add_item(beer);
-		add_item(wine);
-		add_item(martini);
-		add_item(shot);
-		add_item(wine);
-	}
+
+	Drink *beer = new Drink("Beer");
+	Drink *wine = new Drink("Wine");
+	Drink *shot = new Drink("Shot");
+	add_item(beer);
+	add_item(beer);
+	add_item(beer);
+	add_item(wine);
+	add_item(shot);
+
+	Weapon *fists = new Weapon("Fists");
+	Weapon *pocketknife = new Weapon("Pocketknife");
+	add_item(fists);
+	add_item(pocketknife);
+
+	Weapon *derringer = new Weapon("Derringer");
+	add_item(derringer);
+
+	current_melee_weapon = melees[0];
+	current_ranged_weapon = rangeds[0];
 }
 
 void Inventory::add_item(Item *new_item) {
