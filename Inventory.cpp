@@ -38,8 +38,16 @@ Inventory::Inventory(WINDOW *inventory_window, Player *player) {
 	Weapon *derringer = new Weapon("Derringer");
 	add_item(derringer);
 
+	Armor *jumpsuit = new Armor("Jumpsuit");
+	add_item(jumpsuit);
+
+	Armor *none = new Armor("None");
+	add_item(none);
+
 	current_melee_weapon = melees[0];
 	current_ranged_weapon = rangeds[0];
+	current_suit = suits[0];
+	current_hat = hats[0];
 }
 
 void Inventory::add_item(Item *new_item) {
