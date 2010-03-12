@@ -5,6 +5,7 @@
 #include "Agent.h"
 #include "Level.h"
 #include "Game.h"
+#include "Inventory.h"
 #include "minmax.h"
 
 Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {

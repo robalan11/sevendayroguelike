@@ -11,6 +11,7 @@
 #define PI 3.14159265
 
 class Game;
+class Inventory;
 
 class Agent {
     protected:
@@ -28,6 +29,7 @@ class Agent {
         
         Level *location;   // The level this agent currently inhabits.
 		Game *game;        // The game from which this agent was spawned
+		Inventory *inventory;
         int n_visible_corners;
                            // The number of corners the agent can see.
         Position *visible_corners;
@@ -56,6 +58,7 @@ class Agent {
         int get_y_pos();
         float get_facing();
         int get_symbol();
+		Inventory* get_inventory() { return inventory; }
         
         int get_hp();
         int get_max_hp();

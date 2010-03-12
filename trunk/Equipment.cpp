@@ -44,3 +44,42 @@ void Weapon::use(Inventory *parent) {
 int Weapon::damage() {
 	return rand()%(max_damage - min_damage) + min_damage;
 }
+
+
+Armor::Armor(int def, int _type, char *_name, char *_desc) {
+	init(def, _type, _name, _desc);
+}
+Armor::Armor(char *desc) {
+	if (!strcmp(desc, "Jumpsuit"))
+		init(0, SUIT, "Jumpsuit", "What you wore to jump out of the airplane.");
+	else if (!strcmp(desc, "Business Suit"))
+		init(2, SUIT, "Business Suit", "Mediocre defense, but looks good.");
+	else if (!strcmp(desc, "Kevlar Suit"))
+		init(6, SUIT, "Kevlar Suit", "Offers good defense from attacks.");
+	else if (!strcmp(desc, "Tuxedo"))
+		init(10, SUIT, "Tuxedo", "Very stylish, also excellent at stopping bullets.");
+
+	else if (!strcmp(desc, "None"))
+		init(0, HAT, "None", "No hat. Very sad.");
+	else if (!strcmp(desc, "Ushanka"))
+		init(1, HAT, "Ushanka", "While warm, this does not offer much defense.");
+	else if (!strcmp(desc, "Bowler"))
+		init(3, HAT, "Bowler", "Some use this as a weapon, but it's better on your head.");
+	else if (!strcmp(desc, "Fedora"))
+		init(5, HAT, "Fedora", "Essential to the wardrobe of any secret agent.");
+}
+
+void Armor::init(int def, int _type, char *_name, char *_desc) {
+	if (type == RANGED) symbol = '{';
+	if (type == MELEE) symbol = '\\';
+	type = _type;
+	quantity = 1;
+	defense = def;
+	strcpy_s(name, _name);
+	strcpy_s(description, _desc);
+}
+
+void Armor::use(Inventory *parent) {
+	if (type == SUIT) parent->set_current_suit(this);
+	else if (type == HAT) parent->set_current_hat(this);
+}

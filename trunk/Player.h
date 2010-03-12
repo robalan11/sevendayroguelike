@@ -23,7 +23,6 @@ class Player : public Agent {
         } keys;
         void init_keys();
         void default_keys();
-		Inventory *inventory;
 		void die();
         
     public:
@@ -33,6 +32,7 @@ class Player : public Agent {
         void walk(int x, int y);
         void toggle_walk_mode();
 		void toggle_inventory();
+		Inventory* get_inventory() { return inventory; }
         void mutual_fov();
         char *get_name();
 };

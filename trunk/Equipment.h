@@ -13,14 +13,22 @@ class Weapon : public Item {
 
 	public:
 		Weapon(int min, int max, int _type, char *_name, char *_desc);
-		Weapon(char *description);
+		Weapon(char *desc);
 		void init(int min, int max, int _type, char *_name, char *_desc);
 		int damage();
 		void use(Inventory *parent);
 };
 
 class Armor : public Item {
-
+	protected:
+		int defense;
+	
+	public:
+		Armor(int def, int _type, char *_name, char *_desc);
+		Armor(char *desc);
+		void init(int def, int _type, char *_name, char *_desc);
+		int get_defense() { return defense; }
+		void use(Inventory *parent);
 };
 
 #endif
