@@ -39,8 +39,8 @@ bool Game::init_game() {
     stats_win = subwin(stdscr, 3, 80, 32, 1);
 	inventory_win = newwin(0, 0, 0, 0);
     
-    floors[0] = new Level(level_win, this);
 	current_level = 0;
+    floors[current_level] = new Level(level_win, this);
 	num_levels = 1;
     player = new Player(floors[current_level], this);
     floors[current_level]->add_agent(player);
