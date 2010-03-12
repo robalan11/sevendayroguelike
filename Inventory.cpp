@@ -112,7 +112,7 @@ void Inventory::display() {
 	select_category(category);
 	char num[2];
 	for (int i = 0; i < *num_things; i++) {
-		_itoa_s(i+1, num, 10);
+		_itoa(i+1, num, 10);
 		if (i == selected) 
 			wattron(window, A_REVERSE);
 		mvwprintw(window, 5 + i, 5, "%2i", i+1);

@@ -17,9 +17,10 @@ class Item;
 struct Tile{
 	bool revealed; // The player has seen this tile.
 	bool visible;  // The player can see this tile right now.
+	bool dangerous;// A monster the player can see can see this tile now.
 	int symbol;    // The symbol to display for this tile.
 	Agent *agent;  // The agent at this tile, or NULL.
-	Item *stuff;    // The item that is dropped in the tile, or NULL.
+	Item *stuff;   // The item that is dropped in the tile, or NULL.
 };
 
 struct Room{
@@ -36,9 +37,11 @@ class Level{
 public:
 	Level(WINDOW *win, Game *parent);
 	~Level();
-
+    
     void mark_visible(int x, int y);
     void clear_visibility();
+    void mark_dangerous(int x, int y);
+    void clear_dangerousness();
     
 	void open_door(int x, int y);
 	void monsters_take_turns();
@@ -47,6 +50,7 @@ public:
 	void remove_agent(Agent *agent);
 	void move_agent(int x1, int y1, int x2, int y2);
 	void spawn_monster(int monster_type);
+	void spawn_corpse(int x, int y, int monster_type);
 
 	void print();
 	bool contains_agent(int x, int y);

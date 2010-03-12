@@ -24,6 +24,7 @@ class Player : public Agent {
         void init_keys();
         void default_keys();
 		Inventory *inventory;
+		void die();
         
     public:
         Player(Level *loc, Game *parent);
@@ -33,6 +34,7 @@ class Player : public Agent {
         void toggle_walk_mode();
 		void toggle_inventory();
         void mutual_fov();
+        char *get_name();
 };
 
 #endif

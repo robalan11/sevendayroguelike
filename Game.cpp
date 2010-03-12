@@ -1,4 +1,5 @@
 #include <curses.h>
+#include <string.h>
 #include "Agent.h"
 #include "Player.h"
 #include "Level.h"
@@ -6,6 +7,9 @@
 
 Game::Game() {
     init_game();
+    char msg[80] = "no";
+    if(can_change_color()) strcpy(msg, "yes");
+    write_message(msg);
 }
 
 Game::~Game() {
@@ -28,8 +32,11 @@ bool Game::init_game() {
     init_pair(1, COLOR_RED, COLOR_BLACK);
 	init_pair(2, COLOR_YELLOW, COLOR_BLACK);
 	init_pair(3, COLOR_BLACK, COLOR_WHITE);
+	init_pair(4, COLOR_MAGENTA, COLOR_BLACK);
     
     message_win = subwin(stdscr, 2, 80, 0, 1);
+    wmove(message_win, 1, 0);
+    message_buffer[0] = '\0';
     level_win = subwin(stdscr, 30, 80, 2, 1);
     stats_win = subwin(stdscr, 3, 80, 32, 1);
 	inventory_win = newwin(0, 0, 0, 0);
@@ -52,9 +59,6 @@ void Game::play() {
         floors[current_level]->print();
         //mvwaddch(level_win, player->get_y_pos(), player->get_x_pos(), '@');
         wrefresh(level_win);
-        
-        wclear(message_win);
-        wrefresh(message_win);
         
         wclear(stats_win);
         mvwprintw(stats_win, 0, 0, "Player at x:%i, y:%i, facing:%f.  Floor %i",
@@ -96,6 +100,26 @@ bool Game::ascend() {
 	}
 }
 
+Agent *Game::get_player() {
+    return player;
+}
+
 void Game::write_message(const char *msg) {
-    wprintw(message_win, "%s", msg);
+    int x, y, mx, my;
+    getyx(message_win, y, x);
+    getmaxyx(message_win, my, mx);
+    if(strlen(msg) >= (unsigned int)(mx - x)) {
+        wclear(message_win);
+        mvwprintw(message_win, 0, 0, "%s", message_buffer);
+        message_buffer[0] = '\0';
+        wmove(message_win, 1, 0);
+    }
+    wprintw(message_win, "%s ", msg);
+    strcat(message_buffer, msg);
+    strcat(message_buffer, " ");
+    wrefresh(message_win);
+}
+
+void Game::setup_colors() {
+    
 }
