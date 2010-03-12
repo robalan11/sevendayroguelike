@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <curses.h>
 #include <string.h>
 #include "Agent.h"
@@ -7,9 +8,6 @@
 
 Game::Game() {
     init_game();
-    char msg[80] = "no";
-    if(can_change_color()) strcpy(msg, "yes");
-    write_message(msg);
 }
 
 Game::~Game() {
@@ -47,6 +45,9 @@ bool Game::init_game() {
     player = new Player(floors[current_level], this);
     floors[current_level]->add_agent(player);
     
+    deaders = (Agent_List *)malloc(sizeof(Agent_List)); //need to free this and children in destructor
+    deaders->next = NULL;
+    
     return TRUE;
 }
 
@@ -57,7 +58,6 @@ void Game::play() {
     do {
         wclear(level_win);
         floors[current_level]->print();
-        //mvwaddch(level_win, player->get_y_pos(), player->get_x_pos(), '@');
         wrefresh(level_win);
         
         wclear(stats_win);
@@ -104,6 +104,13 @@ Agent *Game::get_player() {
     return player;
 }
 
+void Game::add_dead_agent(Agent *agent) {
+    Agent_List *l = (Agent_List *)malloc(sizeof(Agent_List));
+    l->agent = agent;
+    l->next = deaders->next;
+    deaders->next = l;
+}
+
 void Game::write_message(const char *msg) {
     int x, y, mx, my;
     getyx(message_win, y, x);
@@ -118,8 +125,4 @@ void Game::write_message(const char *msg) {
     strcat(message_buffer, msg);
     strcat(message_buffer, " ");
     wrefresh(message_win);
-}
-
-void Game::setup_colors() {
-    
 }

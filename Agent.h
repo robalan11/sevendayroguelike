@@ -36,11 +36,14 @@ class Agent {
                            // Array of points the agent can see.
                            // Must be reallocated if vision range changes.
         
-        void wait();
+        void wait() { /* do nothing. */ }
         bool can_move_forward();
         void move_forward();
         void set_position(int x, int y);
         virtual void die();
+        
+        virtual int get_melee_damage();
+        virtual int get_ranged_damage();
         
     public:
         Agent(int x, int y, float f, Level *loc, Game *parent);
@@ -52,16 +55,16 @@ class Agent {
 		void gain_hp(int heal);
         void turn(float angle);
 		void face(float angle);
-        void set_location(Level *loc);
+        void set_location(Level *loc) { location = loc; }
         
-        int get_x_pos();
-        int get_y_pos();
-        float get_facing();
-        int get_symbol();
+        int get_x_pos() { return position.x; }
+        int get_y_pos() { return position.y; }
+        float get_facing() { return facing; }
+        int get_symbol() { return symbol; }
 		Inventory* get_inventory() { return inventory; }
         
-        int get_hp();
-        int get_max_hp();
+        int get_hp() { return hp; }
+        int get_max_hp() { return max_hp; }
         
         virtual int take_turn();
         virtual void mutual_fov();

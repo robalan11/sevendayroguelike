@@ -81,8 +81,7 @@ void Agent::attack(Agent *enemy) {
     strcat(message, ".");
     message[0] -= 0x20; //capitalize
     game->write_message(message);
-    //int damage = attack_strength
-    enemy->lose_hp(attack_strength);
+    enemy->lose_hp(get_melee_damage());
 }
 
 void Agent::ranged_attack(int x, int y) {
@@ -93,11 +92,6 @@ void Agent::lose_hp(int hurt) {
     hp -= hurt;
     if(hp <= 0)
         die();
-}
-
-void Agent::wait() {
-    //do nothing!
-    //if there is a time system update that here
 }
 
 bool Agent::can_move_forward() {
@@ -115,6 +109,14 @@ void Agent::move_forward() {
 
 void Agent::die() {
     location->remove_agent(this);
+}
+
+int Agent::get_melee_damage() {
+    return 0;
+}
+
+int Agent::get_ranged_damage() {
+    return 0;
 }
 
 void Agent::gain_hp(int heal) {
@@ -137,35 +139,6 @@ void Agent::turn(float angle) {
 void Agent::face(float angle) {
 	if (angle < 0) angle += float(2*PI);
 	facing = angle;
-}
-
-//Set the level the agent inhabits.
-void Agent::set_location(Level *loc) {
-    location = loc;
-}
-
-int Agent::get_x_pos() {
-    return position.x;
-}
-
-int Agent::get_y_pos() {
-    return position.y;
-}
-
-float Agent::get_facing() {
-    return facing;
-}
-
-int Agent::get_symbol() {
-    return symbol;
-}
-
-int Agent::get_hp() {
-    return hp;
-}
-
-int Agent::get_max_hp() {
-    return max_hp;
 }
 
 int Agent::take_turn() {

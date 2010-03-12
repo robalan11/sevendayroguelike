@@ -17,6 +17,7 @@ Monster::Monster(int x, int y, float f, Level *loc, Game *parent, int monster_ty
             hp = max_hp = 15;
             attack_strength = 5;
             ranged_accuracy = 0; //no ranged attack
+            ranged_attack = 0;
             vision--;vision--; //why do it this way, just set this in player or monster instead
             break;
         default:
@@ -24,12 +25,14 @@ Monster::Monster(int x, int y, float f, Level *loc, Game *parent, int monster_ty
             hp = max_hp = 15;
             attack_strength = 10;
             ranged_accuracy = 2; //throws rocks
+            ranged_attack = 2;
             break;
     }
 }
 
 void Monster::die() {
     Agent::die();
+    game->add_dead_agent(this);
     location->spawn_corpse(position.x, position.y, type);
     char message[80] = "";
     strcat(message, MONSTER_NAME(type));
@@ -55,7 +58,7 @@ int Monster::take_turn() {
             float dtheta = atan2(float(dy), float(dx)) - facing;
             while(dtheta <= (float)(-PI)) dtheta += (float)(2*PI);
             while(dtheta > (float)(PI)) dtheta -= (float)(2*PI);
-            if(dtheta < (float)PI/6) move_forward();
+            if(fabs(dtheta) < (float)PI/6) move_forward();
             else {
                 //otherwise, move toward the player.
                 float theta = atan2(float(dy), float(dx));
@@ -95,12 +98,24 @@ int Monster::take_turn() {
         } while(reroll);
     }
     mutual_fov();
+    mark_danger();
     time_since_player_seen++;
     return 0;
 }
 
 void Monster::mutual_fov() {
     Agent::mutual_fov();
+    //determine what it can see, and what it means...
+    if(can_see(game->get_player()->get_x_pos(), game->get_player()->get_y_pos())) {
+        can_see_player = true;
+        time_since_player_seen = 0;
+        player_last_seen.x = game->get_player()->get_x_pos();
+        player_last_seen.y = game->get_player()->get_y_pos();
+    } else can_see_player = false;
+    could_see_player = (can_see_player || (time_since_player_seen < tenacity));
+}
+
+void Monster::mark_danger() {
     Agent *p = game->get_player();
     //mark the map with visible tiles if player can see this agent
     if(p->can_see(position.x, position.y)) {
@@ -115,14 +130,6 @@ void Monster::mutual_fov() {
                 location->mark_dangerous(visible_corners[i].x-1, visible_corners[i].y-1);
         }
     }
-    //determine what it can see, and what it means...
-    if(can_see(game->get_player()->get_x_pos(), game->get_player()->get_y_pos())) {
-        can_see_player = true;
-        time_since_player_seen = 0;
-        player_last_seen.x = game->get_player()->get_x_pos();
-        player_last_seen.y = game->get_player()->get_y_pos();
-    }
-    could_see_player = (can_see_player || (time_since_player_seen < tenacity));
 }
 
 char *Monster::get_name() {

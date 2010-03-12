@@ -14,6 +14,7 @@
 class Monster : public Agent {
     protected:
         int type;
+        int ranged_attack;
         
         bool can_see_player, could_see_player;
         Position player_last_seen;
@@ -22,10 +23,14 @@ class Monster : public Agent {
         
         void die();
         
+        int get_melee_damage() { return attack_strength; }
+        int get_ranged_damage() { return ranged_attack; }
+        
     public:
         Monster(int x, int y, float f, Level *loc, Game *parent, int monster_type);
         int take_turn();
         void mutual_fov();
+        void mark_danger();
         char *get_name();
 };
 
