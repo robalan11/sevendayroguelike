@@ -32,8 +32,8 @@ void Weapon::init(int min, int max, int _type, char *_name, char *_desc) {
 	quantity = 1;
 	min_damage = min;
 	max_damage = max;
-	strcpy_s(name, _name);
-	strcpy_s(description, _desc);
+	strcpy(name, _name);
+	strcpy(description, _desc);
 }
 
 void Weapon::use(Inventory *parent) {

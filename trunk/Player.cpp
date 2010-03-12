@@ -37,6 +37,10 @@ void Player::default_keys() {
 	keys.inventory = 's';
 }
 
+void Player::die() {
+    
+}
+
 //Get input from the keyboard and act on input.  Then recalculate player's fov.
 int Player::take_turn() {
     int input;
@@ -92,6 +96,7 @@ void Player::toggle_walk_mode() {
 //Calculate FOV as for any agent, then update the map with this information.
 void Player::mutual_fov() {
     location->clear_visibility();
+    location->clear_dangerousness();
     Agent::mutual_fov();
     for(int i = 0; i < n_visible_corners; i++) {
         location->mark_visible(visible_corners[i].x, visible_corners[i].y);
@@ -99,6 +104,10 @@ void Player::mutual_fov() {
         location->mark_visible(visible_corners[i].x, visible_corners[i].y-1);
         location->mark_visible(visible_corners[i].x-1, visible_corners[i].y-1);
     }
+}
+
+char *Player::get_name() {
+    return "you";
 }
 
 //Use the thing where the player is standing: stairs...

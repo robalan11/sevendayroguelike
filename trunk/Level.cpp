@@ -6,10 +6,7 @@
 #include "Monster.h"
 #include "Level.h"
 #include "Item.h"
-
-#define min(x, y) ((x>y)?y:x)
-#define max(x, y) ((x>y)?x:y)
-#define sgn(x) ((x==0)?0:((x>0)?1:-1))
+#include "minmax.h"
 
 class Game;
 
@@ -180,6 +177,16 @@ void Level::clear_visibility() {
             map[i][j].visible = false;
 }
 
+void Level::mark_dangerous(int x, int y) {
+    map[x][y].dangerous = true;
+}
+
+void Level::clear_dangerousness() {
+    for(int j = 0; j < map_height; j++)
+        for(int i = 0; i < map_width; i++)
+            map[i][j].dangerous = false;
+}
+
 void Level::open_door(int x, int y) {
 	if (map[x][y].symbol == '+')
 		map[x][y].symbol = '/';
@@ -239,20 +246,33 @@ void Level::spawn_monster(int monster_type) {
     }
 }
 
+void Level::spawn_corpse(int x, int y, int monster_type) {
+    map[x][y].symbol = '%';
+}
+
 void Level::print() {
 	for (int j = 0; j < map_height; j++) {
 		for (int i = 0; i < map_width; i++) {
             if(map[i][j].revealed) {
-                if(map[i][j].visible)
+                if(map[i][j].visible) {
+                    chtype c = COLOR_PAIR(0);
+                    if(map[i][j].dangerous)
+                        c = COLOR_PAIR(1);
                     if(map[i][j].agent == NULL)
-                        mvwaddch(level_win, j, i,
-                            map[i][j].symbol | COLOR_PAIR(0));
+                        if(map[i][j].stuff == NULL)
+                            mvwaddch(level_win, j, i,
+                                map[i][j].symbol | c);
+                        else
+                            mvwaddch(level_win, j, i,
+                                map[i][j].stuff->get_symbol() | c);
                     else
                         mvwaddch(level_win, j, i,
-                            map[i][j].agent->get_symbol() | COLOR_PAIR(0));
-                else
+                            map[i][j].agent->get_symbol() | c);
+                }
+                else {
                     mvwaddch(level_win, j, i,
-                        map[i][j].symbol | COLOR_PAIR(1));
+                        map[i][j].symbol | COLOR_PAIR(2));
+                }
             }
 		}
 	}

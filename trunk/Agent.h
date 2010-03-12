@@ -34,13 +34,18 @@ class Agent {
                            // Array of points the agent can see.
                            // Must be reallocated if vision range changes.
         
+        void wait();
+        bool can_move_forward();
+        void move_forward();
         void set_position(int x, int y);
+        virtual void die();
         
     public:
         Agent(int x, int y, float f, Level *loc, Game *parent);
         void walk(int x, int y);
         void walk_turn(int x, int y);
         void attack(Agent *enemy);
+        void ranged_attack(int x, int y);
         void lose_hp(int hurt);
 		void gain_hp(int heal);
         void turn(float angle);
@@ -57,7 +62,9 @@ class Agent {
         
         virtual int take_turn();
         virtual void mutual_fov();
+        virtual char *get_name();
         
+        bool can_see(int x, int y);
         bool is_player;
 };
 

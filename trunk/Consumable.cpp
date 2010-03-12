@@ -25,8 +25,8 @@ void Drink::init(int min, int max, char *_name, char *_desc) {
 	quantity = 1;
 	min_heal = min;
 	max_heal = max;
-	strcpy_s(name, _name);
-	strcpy_s(description, _desc);
+	strcpy(name, _name);
+	strcpy(description, _desc);
 }
 
 void Drink::use(Inventory *parent) {

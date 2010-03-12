@@ -1,9 +1,11 @@
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <curses.h>
 #include "Agent.h"
 #include "Level.h"
 #include "Game.h"
+#include "minmax.h"
 
 Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
     position.x = x;
@@ -21,47 +23,97 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
 
 //The agent moves in the specified direction and keeps its facing.
 void Agent::walk(int x, int y) {
-    if(location->is_walkable(position.x+x, position.y+y)) {
-        if(location->contains_agent(position.x+x, position.y+y)) {
-            //if visible
-            attack(location->agent_at(position.x+x, position.y+y));
+    if(x != 0 || y != 0) {
+        if(location->is_walkable(position.x+x, position.y+y)) {
+            if(location->contains_agent(position.x+x, position.y+y)) {
+                if(can_see(position.x+x, position.y+y))
+                    attack(location->agent_at(position.x+x, position.y+y));
+            }
+            else {
+                location->move_agent(position.x, position.y,
+                    position.x+x, position.y+y);
+                set_position(position.x+x, position.y+y);
+            }
+        }
+        else if(location->is_closed_door(position.x+x, position.y+y)) {
+            location->open_door(position.x+x, position.y+y);
+            char msg[80] = "";
+            strcat(msg, get_name());
+            strcat(msg, " open");
+            if(is_player) strcat(msg, " ");
+            else strcat(msg, "s ");
+            strcat(msg, "a door.");
+            msg[0] -= 0x20; //capitalize
+            game->write_message(msg);
         }
         else {
-            location->move_agent(position.x, position.y,
-                position.x+x, position.y+y);
-            set_position(position.x+x, position.y+y);
+            char msg[80] = "";
+            strcat(msg, get_name());
+            strcat(msg, " bump");
+            if(is_player) strcat(msg, " ");
+            else strcat(msg, "s ");
+            strcat(msg, "into an obstacle.");
+            msg[0] -= 0x20; //capitalize
+            game->write_message(msg);
         }
-    }
-    else if(location->is_closed_door(position.x+x, position.y+y)) {
-        location->open_door(position.x+x, position.y+y);
     }
 }
 
 //The agent moves in the specified direction and faces in that direction.
 void Agent::walk_turn(int x, int y) {
-	face(atan2(float(y), float(x)));
-    if(location->is_walkable(position.x+x, position.y+y)) {
-        if(location->contains_agent(position.x+x, position.y+y)) {
-            //if visible
-            attack(location->agent_at(position.x+x, position.y+y));
-        }
-        else {
-            location->move_agent(position.x, position.y,
-                position.x+x, position.y+y);
-            set_position(position.x+x, position.y+y);
-        }
+    if(x != 0 || y != 0) {
+    	face(atan2(float(y), float(x)));
+    	mutual_fov();
+        walk(x, y);
     }
-	else if(location->is_closed_door(position.x+x, position.y+y)) {
-		location->open_door(position.x+x, position.y+y);
-	}
 }
 
 void Agent::attack(Agent *enemy) {
+    char message[80] = "";
+    strcat(message, get_name());
+    strcat(message, " attack");
+    if(is_player)
+        strcat(message, " ");
+    else
+        strcat(message, "s ");
+    strcat(message, enemy->get_name());
+    strcat(message, ".");
+    message[0] -= 0x20; //capitalize
+    game->write_message(message);
+    //int damage = attack_strength
     enemy->lose_hp(attack_strength);
+}
+
+void Agent::ranged_attack(int x, int y) {
+    
 }
 
 void Agent::lose_hp(int hurt) {
     hp -= hurt;
+    if(hp <= 0)
+        die();
+}
+
+void Agent::wait() {
+    //do nothing!
+    //if there is a time system update that here
+}
+
+bool Agent::can_move_forward() {
+    int x = (int)(1.5*cos(facing));
+    int y = (int)(1.5*sin(facing));
+    return (location->is_walkable(position.x+x, position.y+y) &&
+            !location->contains_agent(position.x+x, position.y+y));
+}
+
+void Agent::move_forward() {
+    int x = (int)(1.5*cos(facing));
+    int y = (int)(1.5*sin(facing));
+    walk(x, y);
+}
+
+void Agent::die() {
+    location->remove_agent(this);
 }
 
 void Agent::gain_hp(int heal) {
@@ -150,4 +202,17 @@ void Agent::mutual_fov() {
         }
     }
     n_visible_corners = i;
+}
+
+char *Agent::get_name() {
+    return "Generic Name";
+}
+
+bool Agent::can_see(int x, int y) {
+    for(int i = 0; i < n_visible_corners; i++) {
+        if(((visible_corners[i].x == x) || (visible_corners[i].x-1 == x)) &&
+                ((visible_corners[i].y == y) || (visible_corners[i].y-1 == y)))
+            return true;
+    }
+    return false;
 }
