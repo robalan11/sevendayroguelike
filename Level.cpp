@@ -294,6 +294,18 @@ bool Level::contains_agent(int x, int y) {
     return (map[x][y].agent != NULL);
 }
 
+bool Level::contains_item(int x, int y) {
+	return (map[x][y].stuff != NULL);
+}
+
+Item* Level::get_item(int x, int y) {
+	return map[x][y].stuff;
+}
+
+void Level::remove_item(int x, int y) {
+	map[x][y].stuff = NULL;
+}
+
 Agent *Level::agent_at(int x, int y) {
     return map[x][y].agent;
 }
