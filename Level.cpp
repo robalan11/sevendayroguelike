@@ -204,6 +204,16 @@ void Level::open_door(int x, int y) {
 		map[x][y].symbol = '/';
 }
 
+bool Level::close_door(int x, int y) {
+    if(map[x][y].symbol == '/')
+        if(!contains_agent(x, y)&& !contains_item(x, y)) {
+            map[x][y].symbol = '+';
+            return true;
+        }
+        else return false;
+    else return false;
+}
+
 void Level::monsters_take_turns() {
     Agent_List *l = agents;
     while(l->next) {
@@ -420,6 +430,10 @@ bool Level::is_wall(int x, int y) {
 
 bool Level::is_closed_door(int x, int y) {
     return (map[x][y].symbol == '+');
+}
+
+bool Level::is_open_door(int x, int y) {
+    return (map[x][y].symbol == '/');
 }
 
 bool Level::is_floor(int x, int y) {

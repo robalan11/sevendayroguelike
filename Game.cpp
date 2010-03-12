@@ -34,7 +34,7 @@ bool Game::init_game() {
     
     message_win = subwin(stdscr, 2, 80, 0, 1);
     wmove(message_win, 1, 0);
-    message_buffer[0] = '\0';
+    message_line_1[0] = '\0';
     level_win = subwin(stdscr, 30, 80, 2, 1);
     stats_win = subwin(stdscr, 3, 80, 32, 1);
 	inventory_win = newwin(0, 0, 0, 0);
@@ -59,6 +59,14 @@ void Game::play() {
         wclear(level_win);
         floors[current_level]->print();
         wrefresh(level_win);
+        
+        int msg_x, msg_y;
+        getyx(message_win, msg_y, msg_x);
+        wclear(message_win);
+        mvwprintw(message_win, 0, 0, "%s", message_line_0);
+        mvwprintw(message_win, 1, 0, "%s", message_line_1);
+        wrefresh(message_win);
+        wmove(message_win, msg_y, msg_x);
         
         wclear(stats_win);
         mvwprintw(stats_win, 0, 0, "HP %2i/%2i    Floor %i", player->get_hp(), player->get_max_hp(), current_level);
@@ -117,12 +125,13 @@ void Game::write_message(const char *msg) {
     getmaxyx(message_win, my, mx);
     if(strlen(msg) >= (unsigned int)(mx - x)) {
         wclear(message_win);
-        mvwprintw(message_win, 0, 0, "%s", message_buffer);
-        message_buffer[0] = '\0';
+        strcpy(message_line_0, message_line_1);
+        mvwprintw(message_win, 0, 0, "%s", message_line_0);
+        message_line_1[0] = '\0';
         wmove(message_win, 1, 0);
     }
     wprintw(message_win, "%s ", msg);
-    strcat(message_buffer, msg);
-    strcat(message_buffer, " ");
+    strcat(message_line_1, msg);
+    strcat(message_line_1, " ");
     wrefresh(message_win);
 }

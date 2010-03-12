@@ -44,6 +44,7 @@ public:
     void clear_dangerousness();
     
 	void open_door(int x, int y);
+	bool close_door(int x, int y);
 	void monsters_take_turns();
 	
 	void add_agent(Agent *agent);
@@ -63,6 +64,7 @@ public:
 	bool is_sight_blocking(int x, int y);
 	bool is_wall(int x, int y);
 	bool is_closed_door(int x, int y);
+	bool is_open_door(int x, int y);
 	bool is_floor(int x, int y);
 	bool is_upstair(int x, int y);
 	bool is_downstair(int x, int y);

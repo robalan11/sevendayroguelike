@@ -25,7 +25,8 @@ class Game {
     private:
         WINDOW *level_win, *message_win, *stats_win, *inventory_win;
                              // curses windows for output.
-        char message_buffer[80];
+        char message_line_0[80];
+        char message_line_1[80];
         Agent *player;       // The player.
         Agent_List *deaders; // List of things that have died and need cleaning.
 		Level* floors[16];   // The levels, with zero being the top.
