@@ -41,6 +41,15 @@ void Player::die() {
     
 }
 
+int Player::get_melee_damage() {
+    return attack_strength +
+        ((Weapon *)(inventory->get_current_melee_weapon()))->damage();
+}
+
+int Player::get_ranged_damage() {
+    return ((Weapon *)(inventory->get_current_ranged_weapon()))->damage();
+}
+
 //Get input from the keyboard and act on input.  Then recalculate player's fov.
 int Player::take_turn() {
     int input;

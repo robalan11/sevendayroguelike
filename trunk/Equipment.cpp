@@ -8,7 +8,7 @@ Weapon::Weapon(int min, int max, int _type, char *_name, char *_desc) {
 }
 Weapon::Weapon(char *desc) {
 	if (!strcmp(desc, "Fists"))
-		init(0, 0, MELEE, "Fists", "Your fists. They're not very effective.");
+		init(0, 1, MELEE, "Fists", "Your fists. They're not very effective.");
 	else if (!strcmp(desc, "Pocketknife"))
 		init(1, 3, MELEE, "Pocketknife", "Your pocketknife.  It's sharp enough to do some damage.");
 	else if (!strcmp(desc, "Switchblade"))
@@ -17,7 +17,7 @@ Weapon::Weapon(char *desc) {
 		init(6, 18, MELEE, "Butterfly Knife", "A stylish weapon, excellent for backstabbing.");
 
 	else if (!strcmp(desc, "Derringer"))
-		init(2, 2, RANGED, "Derringer", "Easily concealed, this will help in a pinch.");
+		init(2, 3, RANGED, "Derringer", "Easily concealed, this will help in a pinch.");
 	else if (!strcmp(desc, "Luger"))
 		init(3, 5, RANGED, "Luger", "A solid pistol, this will serve you well.");
 	else if (!strcmp(desc, "Colt 45"))
@@ -75,8 +75,8 @@ void Armor::init(int def, int _type, char *_name, char *_desc) {
 	type = _type;
 	quantity = 1;
 	defense = def;
-	strcpy_s(name, _name);
-	strcpy_s(description, _desc);
+	strcpy(name, _name);
+	strcpy(description, _desc);
 }
 
 void Armor::use(Inventory *parent) {

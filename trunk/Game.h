@@ -16,6 +16,7 @@ class Game {
 		bool ascend();
 		
 		Agent *get_player();
+		void add_dead_agent(Agent *agent);
 		
 		void write_message(const char *msg);
 		WINDOW* get_inventory_win() { return inventory_win; }
@@ -24,8 +25,8 @@ class Game {
         WINDOW *level_win, *message_win, *stats_win, *inventory_win;
                              // curses windows for output.
         char message_buffer[80];
-        void setup_colors(); // set up colors! just like it says
         Agent *player;       // The player.
+        Agent_List *deaders; // List of things that have died and need cleaning.
 		Level* floors[16];   // The levels, with zero being the top.
         int current_level;   // Index into floors array.
 		int num_levels;      // Number of levels already generated.

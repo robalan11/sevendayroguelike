@@ -12,7 +12,7 @@ class Game;
 
 Level::Level(WINDOW *win, Game *parent) {
 	generate();
-	agents = (Agent_List *)malloc(sizeof(Agent_List));
+	agents = (Agent_List *)malloc(sizeof(Agent_List)); //need to free this and children in destructor
 	agents->next = NULL;
 	level_win = win;
 	game = parent;

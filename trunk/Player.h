@@ -24,6 +24,9 @@ class Player : public Agent {
         void init_keys();
         void default_keys();
 		void die();
+		
+		int get_melee_damage();
+		int get_ranged_damage();
         
     public:
         Player(Level *loc, Game *parent);
