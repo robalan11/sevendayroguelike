@@ -133,4 +133,8 @@ void Player::use() {
             location->add_agent(this);
 		}
 	}
+	else if (location->contains_item(position.x, position.y)) {
+		inventory->add_item(location->get_item(position.x, position.y));
+		location->remove_item(position.x, position.y);
+	}
 }

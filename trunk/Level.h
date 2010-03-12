@@ -51,9 +51,12 @@ public:
 	void move_agent(int x1, int y1, int x2, int y2);
 	void spawn_monster(int monster_type);
 	void spawn_corpse(int x, int y, int monster_type);
+	void remove_item(int x, int y);
 
 	void print();
 	bool contains_agent(int x, int y);
+	bool contains_item(int x, int y);
+	Item* get_item(int x, int y);
 	Agent *agent_at(int x, int y);
 	bool is_visible(int x1, int y1, int x2, int y2);
 	bool is_walkable(int x, int y);
