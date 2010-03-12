@@ -52,13 +52,13 @@ int Monster::take_turn() {
         else {
             //move toward
             //if facing nearly toward player, move forward.
-            float dtheta = atan2(dy, dx) - facing;
+            float dtheta = atan2(float(dy), float(dx)) - facing;
             while(dtheta <= (float)(-PI)) dtheta += (float)(2*PI);
             while(dtheta > (float)(PI)) dtheta -= (float)(2*PI);
             if(dtheta < (float)PI/6) move_forward();
             else {
                 //otherwise, move toward the player.
-                float theta = atan2(dy, dx);
+                float theta = atan2(float(dy), float(dx));
                 int x = (int)(1.5*cos(theta));
                 int y = (int)(1.5*sin(theta));
                 walk(x, y);
