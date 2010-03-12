@@ -17,6 +17,7 @@ class Game {
 		
 		Agent *get_player();
 		void add_dead_agent(Agent *agent);
+		int get_current_level() { return current_level; }
 		
 		void write_message(const char *msg);
 		WINDOW* get_inventory_win() { return inventory_win; }

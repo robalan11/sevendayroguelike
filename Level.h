@@ -8,12 +8,12 @@
 
 class Agent;
 class Game;
+class Item;
 
 struct Position {
     int x, y;
 };
 
-class Item;
 struct Tile{
 	bool revealed; // The player has seen this tile.
 	bool visible;  // The player can see this tile right now.

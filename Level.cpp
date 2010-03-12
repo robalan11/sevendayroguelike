@@ -7,15 +7,16 @@
 #include "Level.h"
 #include "Item.h"
 #include "minmax.h"
+#include "Game.h"
 
 class Game;
 
 Level::Level(WINDOW *win, Game *parent) {
+	game = parent;
 	generate();
 	agents = (Agent_List *)malloc(sizeof(Agent_List)); //need to free this and children in destructor
 	agents->next = NULL;
 	level_win = win;
-	game = parent;
 	spawn_monster(DOG);
 }
 
@@ -61,6 +62,17 @@ void Level::generate() {
 
 		rooms[numrooms] = temp;
 		numrooms++;
+	}
+
+	// Add items
+	Item *beer = new Drink("Beer");
+	for (int i = 0; i < min(game->get_current_level() + 5, 10); i++) {
+		int x = rand()%map_width;
+		int y = rand()%map_height;
+		if (map[x][y].symbol == '.')
+			map[x][y].stuff = beer;
+		else
+			i--;
 	}
 
 	rooms[0].connected = true;
