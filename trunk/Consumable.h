@@ -18,9 +18,11 @@ class Drink : public Item {
 
 class Ammo : public Item {
 	protected:
+		void init(char *_name, char *_desc);
 
 	public:
-		
+		Ammo(char *_name, char *_desc);
+		Ammo(char *desc);
 };
 
 #endif

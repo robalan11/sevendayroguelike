@@ -30,6 +30,10 @@ Inventory::Inventory(WINDOW *inventory_window, Player *player) {
 	add_item(wine);
 	add_item(shot);
 
+	Ammo *derringer_ammo = new Ammo("Derringer");
+	add_item(derringer_ammo);
+	add_item(derringer_ammo);
+
 	Weapon *fists = new Weapon("Fists");
 	Weapon *pocketknife = new Weapon("Pocketknife");
 	add_item(fists);
