@@ -30,5 +30,8 @@ void Drink::init(int min, int max, char *_name, char *_desc) {
 }
 
 void Drink::use(Inventory *parent) {
-	parent->get_player()->gain_hp(rand()%(max_heal-min_heal) + min_heal);
+	if (quantity > 0) {
+		parent->get_player()->gain_hp(rand()%(max_heal-min_heal) + min_heal);
+		quantity--;
+	}
 }

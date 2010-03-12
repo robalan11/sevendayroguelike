@@ -65,7 +65,7 @@ void Agent::lose_hp(int hurt) {
 }
 
 void Agent::gain_hp(int heal) {
-	hp += heal;
+	hp = min(hp + heal, max_hp);
 }
 
 void Agent::set_position(int x, int y) {

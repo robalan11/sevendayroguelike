@@ -14,7 +14,7 @@ Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_
     attack_strength = 2;
     ranged_accuracy = 5;
     init_keys();
-	inventory = new Inventory(0, game->get_inventory_win(), this);
+	inventory = new Inventory(game->get_inventory_win(), this);
 }
 
 void Player::init_keys() {

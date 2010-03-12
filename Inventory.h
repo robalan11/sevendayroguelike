@@ -26,22 +26,28 @@ class Inventory {
 		int selected;
 		char* categories[6];
 		int category;
-		Equipment *current_weapon;
-		Equipment *current_suit;
-		Equipment *current_hat;
+		Item *current_melee_weapon;
+		Item *current_ranged_weapon;
+		Item *current_suit;
+		Item *current_hat;
 		Player *parent;
 		void display();
 		void select_category(int type);
 
 	public:
-		Inventory(int difficulty, WINDOW *inventory_window, Player *player);
+		Inventory(WINDOW *inventory_window, Player *player);
 
 		void add_item(Item *new_item);
 		void open();
 
-		Equipment* get_current_weapon() { return current_weapon; }
-		Equipment* get_current_suit() { return current_suit; }
-		Equipment* get_current_hat() { return current_hat; }
+		void set_current_melee_weapon(Weapon *weapon) { current_melee_weapon = weapon; }
+		Item* get_current_melee_weapon() { return current_melee_weapon; }
+		void set_current_ranged_weapon(Weapon *weapon) { current_ranged_weapon = weapon; }
+		Item* get_current_ranged_weapon() { return current_ranged_weapon; }
+		void set_current_suit(Armor *armor) { current_suit = armor; }
+		Item* get_current_suit() { return current_suit; }
+		void set_current_hat(Armor *armor) { current_hat = armor; }
+		Item* get_current_hat() { return current_hat; }
 
 		Player* get_player() { return parent; }
 };

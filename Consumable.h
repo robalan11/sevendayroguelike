@@ -12,13 +12,12 @@ class Drink : public Item {
 
 	public:
 		Drink(int min, int max, char *_name, char *_desc);
-		Drink(char *description);
+		Drink(char *desc);
 		void use(Inventory *parent);
 };
 
 class Ammo : public Item {
 	protected:
-		int shots;
 
 	public:
 		
