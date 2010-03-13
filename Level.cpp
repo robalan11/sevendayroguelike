@@ -65,16 +65,9 @@ void Level::generate() {
 	}
 
 	// Add items
-	Item *beer = new Drink("Beer");
-	for (int i = 0; i < min(game->get_current_level() + 5, 10); i++) {
-		int x = rand()%map_width;
-		int y = rand()%map_height;
-		if (map[x][y].symbol == '.')
-			map[x][y].stuff = beer;
-		else
-			i--;
-	}
+	add_items();
 
+	// Connect rooms
 	rooms[0].connected = true;
 	bool allroomsconnected = false;
 	while (!allroomsconnected) {
@@ -150,6 +143,215 @@ void Level::generate() {
 				}
 			}
 			if (good) map[i][j].symbol = '+';
+		}
+	}
+}
+
+void Level::add_items() {
+	// Drinks
+	Item *beer = new Drink("Beer");
+	for (int i = 0; i < 6 - game->get_current_level(); i++) {
+		int x = rand()%map_width;
+		int y = rand()%map_height;
+		if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+			map[x][y].stuff = beer;
+		else
+			i--;
+	}
+	Item *wine = new Drink("Wine");
+	for (int i = 0; i < 6 - abs(5 - game->get_current_level()); i++) {
+		int x = rand()%map_width;
+		int y = rand()%map_height;
+		if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+			map[x][y].stuff = wine;
+		else
+			i--;
+	}
+	Item *shot = new Drink("Shot");
+	for (int i = 0; i < 6 - abs(10 - game->get_current_level()); i++) {
+		int x = rand()%map_width;
+		int y = rand()%map_height;
+		if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+			map[x][y].stuff = shot;
+		else
+			i--;
+	}
+	Item *martini = new Drink("Martini");
+	for (int i = 0; i < game->get_current_level() - 9; i++) {
+		int x = rand()%map_width;
+		int y = rand()%map_height;
+		if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+			map[x][y].stuff = martini;
+		else
+			i--;
+	}
+
+	// Ammunition
+	Item *derringer_rounds = new Ammo("Derringer");
+	for (int i = 0; i < max(4 - game->get_current_level(), 1); i++) {
+		int x = rand()%map_width;
+		int y = rand()%map_height;
+		if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+			map[x][y].stuff = derringer_rounds;
+		else
+			i--;
+	}
+	if (game->get_current_level() >= 2) {
+		Item *luger_rounds = new Ammo("Luger");
+		for (int i = 0; i < max(6 - game->get_current_level(), 1); i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = luger_rounds;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() >= 6) {
+		Item *colt_rounds = new Ammo("Colt 45");
+		for (int i = 0; i < max(10 - game->get_current_level(), 2); i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = colt_rounds;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() >= 10) {
+		Item *walther_rounds = new Ammo("Walther PPK");
+		for (int i = 0; i < max(15 - game->get_current_level(), 4); i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = walther_rounds;
+			else
+				i--;
+		}
+	}
+
+	// Weapons
+	if (game->get_current_level() == 2) {
+		Item *luger = new Weapon("Luger");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = luger;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 4) {
+		Item *switchblade = new Weapon("Switchblade");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = switchblade;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 6) {
+		Item *colt = new Weapon("Colt 45");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = colt;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 8) {
+		Item *butterfly = new Weapon("Butterfly Knife");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = butterfly;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 10) {
+		Item *walther = new Weapon("Walther PPK");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = walther;
+			else
+				i--;
+		}
+	}
+
+	// Armor
+	if (game->get_current_level() == 1) {
+		Item *ushanka = new Armor("Ushanka");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = ushanka;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 3) {
+		Item *business = new Armor("Business Suit");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = business;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 5) {
+		Item *bowler = new Armor("Bowler");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = bowler;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 7) {
+		Item *kevlar = new Armor("Kevlar Suit");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = kevlar;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 9) {
+		Item *fedora = new Armor("Fedora");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = fedora;
+			else
+				i--;
+		}
+	}
+	if (game->get_current_level() == 11) {
+		Item *tuxedo = new Armor("Tuxedo");
+		for (int i = 0; i < 1; i++) {
+			int x = rand()%map_width;
+			int y = rand()%map_height;
+			if (map[x][y].symbol == '.' && map[x][y].stuff == NULL)
+				map[x][y].stuff = tuxedo;
+			else
+				i--;
 		}
 	}
 }

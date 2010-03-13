@@ -70,6 +70,8 @@ void Game::play() {
         
         wclear(stats_win);
         mvwprintw(stats_win, 0, 0, "HP %2i/%2i    Floor %i", player->get_hp(), player->get_max_hp(), current_level);
+		if (floors[current_level]->contains_item(player->get_x_pos(), player->get_y_pos()))
+			mvwprintw(stats_win, 0, 40, "There is a %s on the floor.", floors[current_level]->get_item(player->get_x_pos(), player->get_y_pos())->get_name());
 		mvwprintw(stats_win, 1, 0, "Equipment:  Melee weapon: %-12s Suit: %s", player->get_inventory()->get_current_melee_weapon()->get_name(), player->get_inventory()->get_current_suit()->get_name());
 		mvwprintw(stats_win, 2, 0, "           Ranged weapon: %-13s Hat: %s", player->get_inventory()->get_current_ranged_weapon()->get_name(), player->get_inventory()->get_current_hat()->get_name());
         wrefresh(stats_win);

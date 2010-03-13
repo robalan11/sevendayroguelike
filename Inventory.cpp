@@ -23,12 +23,10 @@ Inventory::Inventory(WINDOW *inventory_window, Player *player) {
 
 	Drink *beer = new Drink("Beer");
 	Drink *wine = new Drink("Wine");
-	Drink *shot = new Drink("Shot");
 	add_item(beer);
 	add_item(beer);
 	add_item(beer);
 	add_item(wine);
-	add_item(shot);
 
 	Ammo *derringer_ammo = new Ammo("Derringer");
 	add_item(derringer_ammo);

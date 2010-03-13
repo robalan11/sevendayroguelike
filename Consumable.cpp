@@ -42,13 +42,13 @@ Ammo::Ammo(char *_name, char *_desc) {
 
 Ammo::Ammo(char *desc) {
 	if (!strcmp(desc, "Derringer"))
-		init("Derringer", ".40 caliber pinfire bullets");
+		init("Derringer Ammo", ".40 caliber pinfire bullets");
 	else if(!strcmp(desc, "Luger"))
-		init("Luger", "7.65x21mm Parabellum rounds");
+		init("Luger Ammo", "7.65x21mm Parabellum rounds");
 	else if(!strcmp(desc, "Colt 45"))
-		init("Colt 45", ".45 caliber revolver rounds");
+		init("Colt 45 Ammo", ".45 caliber revolver rounds");
 	else if(!strcmp(desc, "Walther PPK"))
-		init("Walther PPK", ".32 ACP cartridges");
+		init("Walther PPK Ammo", ".32 ACP cartridges");
 }
 
 void Ammo::init(char *_name, char *_desc) {
