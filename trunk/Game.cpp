@@ -55,6 +55,8 @@ bool Game::init_game() {
 
 void Game::show_title() {
     mvprintw(1,  30, "The Spy Who Rogued Me");
+    mvprintw(3,  30, "A Seven Day Roguelike");
+    mvprintw(5,  30, "by robalan and jjonir");
     mvprintw(10, 37, "#######");
     mvprintw(11, 37, "#.....#");
     mvprintw(12, 37, "#..@..#");
