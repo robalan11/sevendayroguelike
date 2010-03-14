@@ -119,6 +119,8 @@ void Agent::ranged_attack(int x, int y) {
 }
 
 void Agent::lose_hp(int hurt) {
+    if(is_player)
+        hurt = max(0, hurt - ((Player *)this)->get_armor());
     hp -= hurt;
     if(hp <= 0)
         die();

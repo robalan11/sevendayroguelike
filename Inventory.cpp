@@ -68,13 +68,14 @@ void Inventory::add_item(Item *new_item) {
 void Inventory::open() {
 	int input = 0;
 	while (input != 's') {
+        select_category(category);
 		display();
 		input = getch();
 
-		if (input == ',') selected = (selected+1)%num_drinks;
+		if (input == ',') selected = (selected+1)%(*num_things);
 		else if (input == 'i') {
 			selected--;
-			if (selected < 0) selected = num_drinks-1;
+			if (selected < 0) selected = (*num_things)-1;
 		}
 		else if (input == 'l') {
 			category = (category+1)%6;

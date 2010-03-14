@@ -148,6 +148,11 @@ int Player::get_ranged_damage() {
     return ((Weapon *)(inventory->get_current_ranged_weapon()))->damage();
 }
 
+int Player::get_armor() {
+    return ((Armor *)(inventory->get_current_suit()))->get_defense() +
+            ((Armor *)(inventory->get_current_hat()))->get_defense();
+}
+
 //Get input from the keyboard and act on input.  Then recalculate player's fov.
 int Player::take_turn() {
     int input;
