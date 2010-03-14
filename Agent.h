@@ -68,7 +68,7 @@ class Agent {
         
         virtual int take_turn();
         virtual void mutual_fov();
-        virtual char *get_name();
+        virtual const char *get_name();
         
         bool can_see(int x, int y);
         bool is_player;

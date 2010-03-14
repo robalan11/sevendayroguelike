@@ -14,8 +14,10 @@ Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_
     hp = max_hp = 20;
     attack_strength = 2;
     ranged_accuracy = 9;
+    vision = 10;
     init_keys();
 	inventory = new Inventory(game->get_inventory_win(), this);
+	visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
 
 void Player::init_keys() {
@@ -226,7 +228,7 @@ void Player::fire() {
             } else if(input == keys.walk_se) {
                 aim.x += 1;
                 aim.y += 1;
-            } else if(input == KEY_STAB) {
+            } else if(input == '\t') {
                 visible_agents = visible_agents->next;
                 aim.x = visible_agents->agent->get_x_pos();
                 aim.y = visible_agents->agent->get_y_pos();
@@ -279,7 +281,7 @@ void Player::mutual_fov() {
     }
 }
 
-char *Player::get_name() {
+const char *Player::get_name() {
     return "you";
 }
 

@@ -16,10 +16,7 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
 	game = parent;
     
     speed = 1;
-    vision = 8;
     fov_angle = float(PI/3);
-    
-    visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
 
 //The agent moves in the specified direction and keeps its facing.
@@ -211,7 +208,7 @@ void Agent::mutual_fov() {
     n_visible_corners = i;
 }
 
-char *Agent::get_name() {
+const char *Agent::get_name() {
     return "Generic Name";
 }
 

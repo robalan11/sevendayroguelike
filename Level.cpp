@@ -18,6 +18,9 @@ Level::Level(WINDOW *win, Game *parent) {
 	agents->next = NULL;
 	level_win = win;
 	spawn_monster(DOG);
+	spawn_monster(MOOK);
+	spawn_monster(GUARD);
+	spawn_monster(AGENT);
 }
 
 Level::~Level() {}
@@ -485,13 +488,14 @@ Position Level::shoot_projectile(int x1, int y1, int x2, int y2, int accuracy, i
     int dist = 0;
     for(int i = 1; !hit && (dist < range); i++) {
         print_location(px, py);
+        float fi = i - 0.5;
         
         if(steep) {
-            px = x1 + (int)((i+0.5)*dx/dy)*sgn_x;
+            px = x1 + (int)((fi*dx/dy)+0.5)*sgn_x;
             py = y1 + i*sgn_y;
         } else {
             px = x1 + i*sgn_x;
-            py = y1 + (int)((i+0.5)*dy/dx)*sgn_y;
+            py = y1 + (int)((fi*dy/dx)+0.5)*sgn_y;
         }
         
         if(is_wall(px, py) || is_closed_door(px, py)) {

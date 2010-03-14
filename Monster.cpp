@@ -15,19 +15,44 @@ Monster::Monster(int x, int y, float f, Level *loc, Game *parent, int monster_ty
         case DOG:
             symbol = 'd';
             hp = max_hp = 15;
-            attack_strength = 5;
+            attack_strength = 5; //bites
             ranged_accuracy = 0; //no ranged attack
-            ranged_attack = 0;
-            vision--;vision--; //why do it this way, just set this in player or monster instead
+            ranged_damage = 0;
+            vision = 6;
+            break;
+        case MOOK:
+            symbol = 'm';
+            hp = max_hp = 10;
+            attack_strength = 2; //punches
+            ranged_accuracy = 1; //pistol
+            ranged_damage = 2;
+            vision = 8;
+            break;
+        case GUARD:
+            symbol = 'G';
+            hp = max_hp = 20;
+            attack_strength = 5; //knife or brass knuckles
+            ranged_accuracy = 5; //rifle
+            ranged_damage = 7;
+            vision = 4;
+            break;
+        case AGENT:
+            symbol = 'A';
+            hp = max_hp = 30;
+            attack_strength = 10; //katana
+            ranged_accuracy = 10; //deadeye
+            ranged_damage = 15; //explosive rounds
+            vision = 10;
             break;
         default:
             symbol = 'g'; //default is a goblin; there are no goblins in this game.
             hp = max_hp = 15;
-            attack_strength = 10;
+            attack_strength = 10; //claws
             ranged_accuracy = 2; //throws rocks
-            ranged_attack = 2;
+            ranged_damage = 2;
             break;
     }
+    visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
 
 void Monster::die() {
@@ -53,18 +78,23 @@ int Monster::take_turn() {
             attack(p);
         }
         else {
-            //move toward
-            //if facing nearly toward player, move forward.
-            float dtheta = atan2(float(dy), float(dx)) - facing;
-            while(dtheta <= (float)(-PI)) dtheta += (float)(2*PI);
-            while(dtheta > (float)(PI)) dtheta -= (float)(2*PI);
-            if(fabs(dtheta) < (float)PI/6) move_forward();
-            else {
-                //otherwise, move toward the player.
-                float theta = atan2(float(dy), float(dx));
-                int x = (int)(1.5*cos(theta));
-                int y = (int)(1.5*sin(theta));
-                walk(x, y);
+            if(ranged_damage > 0) {
+                //if has ranged attack, use
+                ranged_attack(p->get_x_pos(), p->get_y_pos());
+            } else {
+                //else move toward
+                //if facing nearly toward player, move forward.
+                float dtheta = atan2(float(dy), float(dx)) - facing;
+                while(dtheta <= (float)(-PI)) dtheta += (float)(2*PI);
+                while(dtheta > (float)(PI)) dtheta -= (float)(2*PI);
+                if(fabs(dtheta) < (float)PI/6) move_forward();
+                else {
+                    //otherwise, move toward the player.
+                    float theta = atan2(float(dy), float(dx));
+                    int x = (int)(1.5*cos(theta));
+                    int y = (int)(1.5*sin(theta));
+                    walk(x, y);
+                }
             }
         }
     }
@@ -132,6 +162,14 @@ void Monster::mark_danger() {
     }
 }
 
-char *Monster::get_name() {
+const char *Monster::get_name() {
     return MONSTER_NAME(type);
+}
+
+const char *Monster::MONSTER_NAME(int x) {
+    if(x==DOG) return "a dog";
+    if(x==MOOK) return "a mook";
+    if(x==GUARD) return "a guard";
+    if(x==AGENT) return "an agent";
+    return "something";
 }

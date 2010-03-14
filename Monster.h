@@ -9,12 +9,14 @@
 
 //monster types
 #define DOG 0
-#define MONSTER_NAME(DOG) "a dog"
+#define MOOK 1
+#define GUARD 2
+#define AGENT 3
 
 class Monster : public Agent {
     protected:
         int type;
-        int ranged_attack;
+        int ranged_damage;
         
         bool can_see_player, could_see_player;
         Position player_last_seen;
@@ -24,14 +26,15 @@ class Monster : public Agent {
         void die();
         
         int get_melee_damage() { return attack_strength; }
-        int get_ranged_damage() { return ranged_attack; }
+        int get_ranged_damage() { return ranged_damage; }
         
     public:
         Monster(int x, int y, float f, Level *loc, Game *parent, int monster_type);
         int take_turn();
         void mutual_fov();
         void mark_danger();
-        char *get_name();
+        const char *get_name();
+        const char *MONSTER_NAME(int x);
 };
 
 #endif
