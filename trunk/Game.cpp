@@ -48,10 +48,21 @@ bool Game::init_game() {
     deaders = (Agent_List *)malloc(sizeof(Agent_List)); //need to free this and children in destructor
     deaders->next = NULL;
     
-    return TRUE;
+    game_over = game_won = game_lost = false;
+    
+    return true;
 }
 
 void Game::show_title() {
+    mvprintw(1,  30, "The Spy Who Rogued Me");
+    mvprintw(10, 37, "#######");
+    mvprintw(11, 37, "#.....#");
+    mvprintw(12, 37, "#..@..#");
+    mvprintw(13, 37, "#.....#");
+    mvprintw(14, 37, "#######");
+    getch();
+    clear();
+    
     char *text1 =
     "The year is 1952. The place, a tiny village in Northern Sibera.\n"
     "Buried nearby is a secret government installation containing weapons\n"
@@ -60,7 +71,7 @@ void Game::show_title() {
     "tracks.  Your mission, should you choose to accept it, is to fight or\n"
     "sneak your way through the labyrinthine passages carved into the hills\n"
     "and find the central control room to thwart this plot once and for all.\n";
-    printw("%s", text1);
+    mvprintw(0, 0, "%s", text1);
     printw("%s", "\nPress a key to accept this mission.\n");
     curs_set(2);
     getch();
@@ -112,11 +123,60 @@ void Game::play() {
         
         refresh();
         input = player->take_turn();
-        floors[current_level]->monsters_take_turns();
-    } while(input != 'Q');
+        if(!game_over)
+            floors[current_level]->monsters_take_turns();
+    } while(input != 'Q' && !game_over);
+}
+
+void Game::end() {
+    if(game_lost) {
+        clear();
+        mvprintw(0, 0, "Mission Report.\n%s ", name);
+        char *text1 =
+        "was sent on a mission three days ago.\n"
+        "We have not had word since then. ";
+        printw("%s", text1);
+        mvprintw(3, 0, "%s", name);
+        printw(" is assumed deceased.");
+        mvprintw(5, 1, "Press any key to file this report. ");
+        curs_set(2);
+        getch();
+        curs_set(0);
+        mvprintw(6, 1, "Report filed.");
+        getch();
+    } else if(game_won) {
+        clear();
+        char *text1 =
+        "After you descend the stairs, you find yourself in a control room.\n"
+        "There seems to be nobody else here; All of the guards were on the\n"
+        "upper floors of the installation.  You find the controls to shut down\n"
+        "the base entirely, conveniently placed where anyone who manages to\n"
+        "infiltrate the lower floors can activate them.  You swipe any papers\n"
+        "that look like they would be useful for your organization.  Now all\n"
+        "that remains is to wipe their files.\n";
+        mvprintw(0, 0, "%s", text1);
+        mvprintw(8, 1, "Press any key to delete the plans for the weapon system. ");
+        curs_set(2);
+        getch();
+        curs_set(0);
+        mvprintw(9, 1, "The files have been removed.\n\n"
+        "Now all that remains is to escape this installation and meet with\n"
+        "your contact outside, then to get back home.");
+        getch();
+        clear();
+        mvprintw(0, 0, "Congratulations, %s!\n\nYou have won the game!\n\n\n\n"
+        "This game was made for the 2010 seven day roguelike competition.\n\n"
+        "Programming and Design by robalan and jjonir.\n\n"
+        "Input and output use the public domain curses library.\n\n"
+        "Thank you for playing!", name);
+        getch();
+    } else {
+        //wtf
+    }
 }
 
 //Go down a stair.  Create a new level if there is none.
+//If this is the last level, win the game.
 bool Game::descend() {
 	if (current_level < 15) {
         floors[current_level]->remove_agent(player);
@@ -128,6 +188,7 @@ bool Game::descend() {
 		player->set_location(floors[current_level]);
 		return true;
 	} else {
+        win();
 		return false;
 	}
 }
@@ -142,6 +203,16 @@ bool Game::ascend() {
 	} else {
 		return false;
 	}
+}
+
+void Game::win() {
+    game_over = true;
+    game_won = true;
+}
+
+void Game::lose() {
+    game_over = true;
+    game_lost = true;
 }
 
 Agent *Game::get_player() {

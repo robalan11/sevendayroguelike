@@ -31,6 +31,7 @@ class Player : public Agent {
         
     public:
         Player(Level *loc, Game *parent);
+        ~Player();
 		void use();
         int take_turn();
         void fire();

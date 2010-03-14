@@ -16,6 +16,10 @@ class Game {
 		bool descend();
 		bool ascend();
 		
+		void win();
+		void lose();
+		void end();
+		
 		Agent *get_player();
 		void add_dead_agent(Agent *agent);
 		int get_current_level() { return current_level; }
@@ -34,6 +38,8 @@ class Game {
 		Level* floors[16];   // The levels, with zero being the top.
         int current_level;   // Index into floors array.
 		int num_levels;      // Number of levels already generated.
+		bool game_over;      // Flag indicating whether the game is over.
+		bool game_won, game_lost; //Flags indicating the result of the game.
 };
 
 #endif

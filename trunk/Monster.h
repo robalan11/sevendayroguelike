@@ -30,6 +30,7 @@ class Monster : public Agent {
         
     public:
         Monster(int x, int y, float f, Level *loc, Game *parent, int monster_type);
+        ~Monster();
         int take_turn();
         void mutual_fov();
         void mark_danger();

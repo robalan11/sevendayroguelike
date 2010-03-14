@@ -5,6 +5,7 @@ int main() {
     
     game->show_title();
     game->play();
+    game->end();
     
     delete game;
     

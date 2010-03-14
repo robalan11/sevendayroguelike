@@ -20,6 +20,11 @@ Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_
 	visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
 
+Player::~Player() {
+    free(visible_corners);
+    delete inventory;
+}
+
 void Player::init_keys() {
     default_keys();
 }
@@ -43,7 +48,8 @@ void Player::default_keys() {
 }
 
 void Player::die() {
-    
+    Agent::die();
+    game->lose();
 }
 
 void Player::close_door() {
