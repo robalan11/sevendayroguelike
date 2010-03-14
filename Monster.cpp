@@ -55,6 +55,10 @@ Monster::Monster(int x, int y, float f, Level *loc, Game *parent, int monster_ty
     visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
 
+Monster::~Monster() {
+    free(visible_corners);
+}
+
 void Monster::die() {
     Agent::die();
     game->add_dead_agent(this);

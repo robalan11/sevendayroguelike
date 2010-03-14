@@ -19,6 +19,10 @@ Agent::Agent(int x, int y, float f, Level *loc, Game *parent) {
     fov_angle = float(PI/3);
 }
 
+Agent::~Agent() {
+    
+}
+
 //The agent moves in the specified direction and keeps its facing.
 void Agent::walk(int x, int y) {
     if(x != 0 || y != 0) {
