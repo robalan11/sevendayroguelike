@@ -34,7 +34,7 @@ bool Game::init_game() {
     
     message_win = subwin(stdscr, 2, 80, 0, 1);
     wmove(message_win, 1, 0);
-    message_line_1[0] = '\0';
+    message_line_1[0] = message_line_0[0] = '\0';
     level_win = subwin(stdscr, 30, 80, 2, 1);
     stats_win = subwin(stdscr, 3, 80, 32, 1);
 	inventory_win = newwin(0, 0, 0, 0);
@@ -54,6 +54,7 @@ bool Game::init_game() {
 //The main game loop.
 void Game::play() {
     player->mutual_fov();
+    floors[current_level]->monsters_mutual_fov();
     int input;
     do {
         wclear(level_win);

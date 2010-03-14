@@ -85,7 +85,40 @@ void Agent::attack(Agent *enemy) {
 }
 
 void Agent::ranged_attack(int x, int y) {
+    Position hit = location->shoot_projectile(position.x, position.y, x, y, ranged_accuracy, 10);
     
+    char msg[80] = "";
+    strcat(msg, get_name());
+    strcat(msg, " shoot");
+    if(!is_player)
+        strcat(msg, "s");
+    strcat(msg, ".");
+    msg[0] -= 0x20;
+    game->write_message(msg);
+    
+    if((hit.x == position.x) && (hit.y == position.y)) {
+        //miss...
+    } else {
+        if(location->contains_agent(hit.x, hit.y)) {
+            //hit an agent
+            msg[0] = '\0';
+            strcat(msg, get_name());
+            strcat(msg, " hit");
+            if(is_player)
+                strcat(msg, " ");
+            else
+                strcat(msg, "s ");
+            strcat(msg, location->agent_at(hit.x, hit.y)->get_name());
+            strcat(msg, "!");
+            msg[0] -= 0x20;
+            game->write_message(msg);
+            location->agent_at(hit.x, hit.y)->lose_hp(get_ranged_damage());
+        } else if(location->is_wall(hit.x, hit.y) || location->is_closed_door(hit.x, hit.y)) {
+            //hit a wall
+        } else {
+            //wtf
+        }
+    }
 }
 
 void Agent::lose_hp(int hurt) {

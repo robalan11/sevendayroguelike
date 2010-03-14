@@ -46,6 +46,10 @@ public:
 	void open_door(int x, int y);
 	bool close_door(int x, int y);
 	void monsters_take_turns();
+	void monsters_mutual_fov();
+	
+	void print_path(int x1, int y1, int x2, int y2);
+	Position shoot_projectile(int x1, int y1, int x2, int y2, int accuracy, int range);
 	
 	void add_agent(Agent *agent);
 	void remove_agent(Agent *agent);
@@ -53,8 +57,9 @@ public:
 	void spawn_monster(int monster_type);
 	void spawn_corpse(int x, int y, int monster_type);
 	void remove_item(int x, int y);
-
+    
 	void print();
+	void print_location(int x, int y);
 	bool contains_agent(int x, int y);
 	bool contains_item(int x, int y);
 	Item* get_item(int x, int y);

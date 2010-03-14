@@ -19,7 +19,7 @@ class Player : public Agent {
             int walk_west, walk_east, walk_north, walk_south,
                     walk_ne, walk_nw, walk_se, walk_sw,
                     turn_left, turn_right, use, change_walk_mode,
-					inventory, close;
+					inventory, close, fire;
         } keys;
         void init_keys();
         void default_keys();
@@ -33,6 +33,7 @@ class Player : public Agent {
         Player(Level *loc, Game *parent);
 		void use();
         int take_turn();
+        void fire();
         void walk(int x, int y);
         void toggle_walk_mode();
 		void toggle_inventory();

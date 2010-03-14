@@ -13,7 +13,7 @@ Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_
     symbol = '@';
     hp = max_hp = 20;
     attack_strength = 2;
-    ranged_accuracy = 5;
+    ranged_accuracy = 9;
     init_keys();
 	inventory = new Inventory(game->get_inventory_win(), this);
 }
@@ -37,6 +37,7 @@ void Player::default_keys() {
     keys.change_walk_mode = '/';
 	keys.inventory = 's';
 	keys.close = 'c';
+	keys.fire = 'f';
 }
 
 void Player::die() {
@@ -177,12 +178,55 @@ int Player::take_turn() {
 		inventory->open();
 	else if(input == keys.close)
         close_door();
+    else if(input == keys.fire)
+        fire();
     else {
         
     }
     
     mutual_fov();
     return input;
+}
+
+void Player::fire() {
+    Position aim;
+    aim.x = position.x;
+    aim.y = position.y;
+    int input;
+    do {
+        location->print();
+        location->print_path(position.x, position.y, aim.x, aim.y);
+        input = getch();
+        if(input == keys.walk_west) {
+            aim.x -= 1;
+        } else if(input == keys.walk_east) {
+            aim.x += 1;
+        } else if(input == keys.walk_north) {
+            aim.y -= 1;
+        } else if(input == keys.walk_south) {
+            aim.y += 1;
+        } else if(input == keys.walk_nw) {
+            aim.x -= 1;
+            aim.y -= 1;
+        } else if(input == keys.walk_sw) {
+            aim.x -= 1;
+            aim.y += 1;
+        } else if(input == keys.walk_ne) {
+            aim.x += 1;
+            aim.y -= 1;
+        } else if(input == keys.walk_se) {
+            aim.x += 1;
+            aim.y += 1;
+        }
+    } while((input != keys.fire) && (input != keys.use));
+    location->print();
+    if(input == keys.fire) {
+        if((aim.x == position.x) && (aim.y == position.y)) {
+            game->write_message("If you want to die, try standing around near some dogs.");
+        } else {
+            ranged_attack(aim.x, aim.y);
+        }
+    }
 }
 
 void Player::walk(int x, int y) {
