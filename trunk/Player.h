@@ -39,7 +39,7 @@ class Player : public Agent {
 		void toggle_inventory();
 		Inventory* get_inventory() { return inventory; }
         void mutual_fov();
-        char *get_name();
+        const char *get_name();
 };
 
 #endif
