@@ -426,6 +426,109 @@ void Level::monsters_take_turns() {
     }
 }
 
+void Level::monsters_mutual_fov() {
+    Agent_List *l = agents;
+    while(l->next) {
+        if(!l->next->agent->is_player) {
+            l->next->agent->mutual_fov();
+            ((Monster *)(l->next->agent))->mark_danger();
+        }
+        l = l->next;
+    }
+}
+
+void Level::print_path(int x1, int y1, int x2, int y2) {
+    int dx = abs(x2-x1);
+    int dy = abs(y2-y1);
+    int sgn_x = sgn(x2-x1);
+    int sgn_y = sgn(y2-y1);
+    Position *path = (Position *)calloc(max(dx, dy)+1, sizeof(Position));
+    bool steep = (dy>dx);
+    path[0].x = x1;
+    path[0].y = y1;
+    int x, y;
+    bool stillgoing = true;
+    for(int i = 1; i <= max(dy, dx); i++) {
+        float fi = i - 0.5;
+        if(steep) {
+            x = x1 + (int)((fi*dx/dy)+0.5)*sgn_x;
+            y = y1 + i*sgn_y;
+        } else {
+            x = x1 + i*sgn_x;
+            y = y1 + (int)((fi*dy/dx)+0.5)*sgn_y;
+        }
+        if(stillgoing) {
+            mvwaddch(level_win, y, x, '*');
+            if(is_wall(x, y) || is_closed_door(x, y))
+                stillgoing = false;
+        }
+    }
+    mvwaddch(level_win, y2, x2, 'X');
+    wrefresh(level_win);
+}
+
+Position Level::shoot_projectile(int x1, int y1, int x2, int y2, int accuracy, int range) {
+    int dx = abs(x2-x1);
+    int dy = abs(y2-y1);
+    int sgn_x = sgn(x2-x1);
+    int sgn_y = sgn(y2-y1);
+    int c;
+    if(sgn_x == 0) c = '|';
+    else if(sgn_y == 0) c = '-';
+    else if(sgn_x*sgn_y == 1) c = '\\';
+    else c = '/';
+    
+    bool steep = (dy>dx);
+    bool hit = false;
+    Position end;
+    int px = x1, py = y1;
+    int dist = 0;
+    for(int i = 1; !hit && (dist < range); i++) {
+        print_location(px, py);
+        
+        if(steep) {
+            px = x1 + (int)((i+0.5)*dx/dy)*sgn_x;
+            py = y1 + i*sgn_y;
+        } else {
+            px = x1 + i*sgn_x;
+            py = y1 + (int)((i+0.5)*dy/dx)*sgn_y;
+        }
+        
+        if(is_wall(px, py) || is_closed_door(px, py)) {
+            hit = true;
+            end.x = px;
+            end.y = py;
+        } else if(contains_agent(px, py)) {
+            int misschance = 1000;
+            for(int j = 0; j < accuracy; j++)
+                misschance = misschance * 8 / 10;
+            if(rand() % 1000 > misschance) {
+                hit = true;
+                end.x = px;
+                end.y = py;
+            }
+        }
+        
+        if(game->get_player()->can_see(px, py)) {
+            if(hit)
+                mvwaddch(level_win, py, px, '*' | COLOR_PAIR(0));
+            else
+                mvwaddch(level_win, py, px, c | COLOR_PAIR(0));
+            wrefresh(level_win);
+            //delay
+            clock_t end = clock() + CLOCKS_PER_SEC / 100;
+            while(clock() < end) {}
+        }
+        
+        dist = (int)sqrt((px-x1)*(px-x1) + (py-y1)*(py-y1));
+    }
+    if(!hit) {
+        end.x = x1;
+        end.y = y1;
+    }
+    return end;
+}
+
 void Level::add_agent(Agent *agent) {
     map[agent->get_x_pos()][agent->get_y_pos()].agent = agent;
     Agent_List *l = agents;
@@ -475,31 +578,37 @@ void Level::spawn_corpse(int x, int y, int monster_type) {
 }
 
 void Level::print() {
+    wclear(level_win);
 	for (int j = 0; j < map_height; j++) {
 		for (int i = 0; i < map_width; i++) {
-            if(map[i][j].revealed) {
-                if(map[i][j].visible) {
-                    chtype c = COLOR_PAIR(0);
-                    if(map[i][j].dangerous)
-                        c = COLOR_PAIR(1);
-                    if(map[i][j].agent == NULL)
-                        if(map[i][j].stuff == NULL)
-                            mvwaddch(level_win, j, i,
-                                map[i][j].symbol | c);
-                        else
-                            mvwaddch(level_win, j, i,
-                                map[i][j].stuff->get_symbol() | c);
-                    else
-                        mvwaddch(level_win, j, i,
-                            map[i][j].agent->get_symbol() | c);
-                }
-                else {
-                    mvwaddch(level_win, j, i,
-                        map[i][j].symbol | COLOR_PAIR(2));
-                }
-            }
+            print_location(i, j);
 		}
 	}
+	wrefresh(level_win);
+}
+
+void Level::print_location(int i, int j) {
+    if(map[i][j].revealed) {
+        if(map[i][j].visible) {
+            chtype c = COLOR_PAIR(0);
+            if(map[i][j].dangerous)
+                c = COLOR_PAIR(1);
+            if(map[i][j].agent == NULL)
+                if(map[i][j].stuff == NULL)
+                    mvwaddch(level_win, j, i,
+                        map[i][j].symbol | c);
+                else
+                    mvwaddch(level_win, j, i,
+                        map[i][j].stuff->get_symbol() | c);
+            else
+                mvwaddch(level_win, j, i,
+                    map[i][j].agent->get_symbol() | c);
+        }
+        else {
+            mvwaddch(level_win, j, i,
+                map[i][j].symbol | COLOR_PAIR(2));
+        }
+    }
 }
 
 bool Level::contains_agent(int x, int y) {
