@@ -23,6 +23,7 @@ class Ammo : public Item {
 	public:
 		Ammo(char *_name, char *_desc);
 		Ammo(char *desc);
+		void use(Inventory *parent);
 };
 
 #endif

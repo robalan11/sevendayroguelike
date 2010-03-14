@@ -33,6 +33,7 @@ class Inventory {
 		Player *parent;
 		void display();
 		void select_category(int type);
+		Item* which_ammo(Item *weapon);
 
 	public:
 		Inventory(WINDOW *inventory_window, Player *player);
@@ -48,6 +49,8 @@ class Inventory {
 		Item* get_current_suit() { return current_suit; }
 		void set_current_hat(Armor *armor) { current_hat = armor; }
 		Item* get_current_hat() { return current_hat; }
+		int get_ammo();
+		void use_ammo();
 
 		Player* get_player() { return parent; }
 };

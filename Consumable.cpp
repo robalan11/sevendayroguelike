@@ -58,3 +58,8 @@ void Ammo::init(char *_name, char *_desc) {
 	strcpy(name, _name);
 	strcpy(description, _desc);
 }
+
+void Ammo::use(Inventory *parent) {
+    if(quantity > 0)
+        quantity--;
+}
