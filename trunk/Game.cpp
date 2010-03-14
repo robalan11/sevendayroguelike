@@ -51,6 +51,39 @@ bool Game::init_game() {
     return TRUE;
 }
 
+void Game::show_title() {
+    char *text1 =
+    "The year is 1952. The place, a tiny village in Northern Sibera.\n"
+    "Buried nearby is a secret government installation containing weapons\n"
+    "that could destroy the world as we know it.  Only you have the daring,\n"
+    "derring-do, and derringers to stop these dastardly deviants in their\n"
+    "tracks.  Your mission, should you choose to accept it, is to fight or\n"
+    "sneak your way through the labyrinthine passages carved into the hills\n"
+    "and find the central control room to thwart this plot once and for all.\n";
+    printw("%s", text1);
+    printw("%s", "\nPress a key to accept this mission.\n");
+    curs_set(2);
+    getch();
+    clear();
+    echo();
+    mvprintw(1, 1, "Enter your name: ");
+    name[0] = 'M';
+    name[1] = '\0';
+    scanw("%31s", name);
+    noecho();
+    curs_set(0);
+    clear();
+    mvprintw(0, 0, "Mission Briefing.\n%s:", name);
+    char *text2 =
+    " You will parachute directly into the installation. You will carry as little\n"
+    "as possible to minimize the danger of detection.  You will be equipped with\n"
+    "a derringer, some ammunition, a pocketknife, and a your jumpsuit.  We trust\n"
+    "that you will be able to find any other tools you need in the base.\n";
+    mvprintw(2, 0, "%s", text2);
+    getch();
+    clear();
+}
+
 //The main game loop.
 void Game::play() {
     player->mutual_fov();
