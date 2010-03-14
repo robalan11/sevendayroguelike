@@ -50,6 +50,7 @@ public:
 	
 	void print_path(int x1, int y1, int x2, int y2);
 	Position shoot_projectile(int x1, int y1, int x2, int y2, int accuracy, int range);
+	Agent_List *get_targets(Agent *agent);
 	
 	void add_agent(Agent *agent);
 	void remove_agent(Agent *agent);

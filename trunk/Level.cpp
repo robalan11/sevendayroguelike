@@ -529,6 +529,26 @@ Position Level::shoot_projectile(int x1, int y1, int x2, int y2, int accuracy, i
     return end;
 }
 
+Agent_List *Level::get_targets(Agent *agent) {
+    Agent_List *l = agents;
+    Agent_List *result = (Agent_List *)malloc(sizeof(Agent_List));
+    result->next = result;
+    result->agent = game->get_player();
+    while(l->next) {
+        if(!l->next->agent->is_player) {
+            if(game->get_player()->can_see(l->next->agent->get_x_pos(), l->next->agent->get_y_pos())) {
+                Agent_List *t = (Agent_List *)malloc(sizeof(Agent_List));
+                t->agent = l->next->agent;
+                t->next = result->next;
+                result->next = t;
+            }
+        }
+        l = l->next;
+    }
+    result = result->next;
+    return result;
+}
+
 void Level::add_agent(Agent *agent) {
     map[agent->get_x_pos()][agent->get_y_pos()].agent = agent;
     Agent_List *l = agents;

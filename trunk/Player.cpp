@@ -189,42 +189,65 @@ int Player::take_turn() {
 }
 
 void Player::fire() {
-    Position aim;
-    aim.x = position.x;
-    aim.y = position.y;
-    int input;
-    do {
+    if(inventory->get_ammo() == 0) {
+        char msg[80] = "";
+        strcat(msg, "You have no ammunition for the ");
+        strcat(msg, inventory->get_current_ranged_weapon()->get_name());
+        strcat(msg, ".");
+        game->write_message(msg);
+    } else {
+        Position aim;
+        Agent_List *visible_agents = location->get_targets(this);
+        
+        aim.x = visible_agents->agent->get_x_pos();
+        aim.y = visible_agents->agent->get_y_pos();
+        int input;
+        do {
+            location->print();
+            location->print_path(position.x, position.y, aim.x, aim.y);
+            input = getch();
+            if(input == keys.walk_west) {
+                aim.x -= 1;
+            } else if(input == keys.walk_east) {
+                aim.x += 1;
+            } else if(input == keys.walk_north) {
+                aim.y -= 1;
+            } else if(input == keys.walk_south) {
+                aim.y += 1;
+            } else if(input == keys.walk_nw) {
+                aim.x -= 1;
+                aim.y -= 1;
+            } else if(input == keys.walk_sw) {
+                aim.x -= 1;
+                aim.y += 1;
+            } else if(input == keys.walk_ne) {
+                aim.x += 1;
+                aim.y -= 1;
+            } else if(input == keys.walk_se) {
+                aim.x += 1;
+                aim.y += 1;
+            } else if(input == KEY_STAB) {
+                visible_agents = visible_agents->next;
+                aim.x = visible_agents->agent->get_x_pos();
+                aim.y = visible_agents->agent->get_y_pos();
+            }
+        } while((input != keys.fire) && (input != keys.use));
         location->print();
-        location->print_path(position.x, position.y, aim.x, aim.y);
-        input = getch();
-        if(input == keys.walk_west) {
-            aim.x -= 1;
-        } else if(input == keys.walk_east) {
-            aim.x += 1;
-        } else if(input == keys.walk_north) {
-            aim.y -= 1;
-        } else if(input == keys.walk_south) {
-            aim.y += 1;
-        } else if(input == keys.walk_nw) {
-            aim.x -= 1;
-            aim.y -= 1;
-        } else if(input == keys.walk_sw) {
-            aim.x -= 1;
-            aim.y += 1;
-        } else if(input == keys.walk_ne) {
-            aim.x += 1;
-            aim.y -= 1;
-        } else if(input == keys.walk_se) {
-            aim.x += 1;
-            aim.y += 1;
+        if(input == keys.fire) {
+            if((aim.x == position.x) && (aim.y == position.y)) {
+                game->write_message("If you want to die, try standing around near some dogs.");
+            } else {
+                ranged_attack(aim.x, aim.y);
+                inventory->use_ammo();
+            }
         }
-    } while((input != keys.fire) && (input != keys.use));
-    location->print();
-    if(input == keys.fire) {
-        if((aim.x == position.x) && (aim.y == position.y)) {
-            game->write_message("If you want to die, try standing around near some dogs.");
-        } else {
-            ranged_attack(aim.x, aim.y);
+        Agent_List *start = visible_agents;
+        Agent_List *prev = visible_agents->next;
+        visible_agents = prev;
+        while(visible_agents != start->next) {
+            visible_agents = visible_agents->next;
+            free(prev);
+            prev = visible_agents;
         }
     }
 }

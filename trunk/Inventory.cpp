@@ -167,3 +167,26 @@ void Inventory::select_category(int type) {
 			break;
 	}
 }
+
+Item* Inventory::which_ammo(Item *weapon) {
+    for(int i = 0; i < num_ammos; i++)
+        if(!strncmp(ammos[i]->get_name(), weapon->get_name(), strlen(weapon->get_name())))
+            return ammos[i];
+    return NULL;
+}
+
+int Inventory::get_ammo() {
+    Item *a = which_ammo(current_ranged_weapon);
+    if(a == NULL)
+        return 0;
+    else
+        return a->get_quantity();
+}
+
+void Inventory::use_ammo() {
+    Item *a = which_ammo(current_ranged_weapon);
+    if(a == NULL) {
+        //wtf
+    } else
+        a->use(this);
+}
