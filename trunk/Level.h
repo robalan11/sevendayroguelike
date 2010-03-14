@@ -82,6 +82,7 @@ public:
 private:
 	void generate();
 	void add_items();
+	void populate();
 	Room rect_room();
 	bool room_intersect(Room a, Room b);
 	bool point_in_room(int x, int y, Room a);

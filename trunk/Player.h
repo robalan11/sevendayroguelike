@@ -38,6 +38,7 @@ class Player : public Agent {
         void toggle_walk_mode();
 		void toggle_inventory();
 		Inventory* get_inventory() { return inventory; }
+		int get_armor();
         void mutual_fov();
         const char *get_name();
 };

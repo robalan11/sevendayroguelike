@@ -70,8 +70,8 @@ Armor::Armor(char *desc) {
 }
 
 void Armor::init(int def, int _type, char *_name, char *_desc) {
-	if (type == SUIT) symbol = 'T';
-	if (type == HAT) symbol = '^';
+	if (_type == SUIT) symbol = 'T';
+	if (_type == HAT) symbol = '^';
 	type = _type;
 	quantity = 1;
 	defense = def;

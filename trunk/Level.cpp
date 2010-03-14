@@ -17,10 +17,7 @@ Level::Level(WINDOW *win, Game *parent) {
 	agents = (Agent_List *)malloc(sizeof(Agent_List)); //need to free this and children in destructor
 	agents->next = NULL;
 	level_win = win;
-	spawn_monster(DOG);
-	spawn_monster(MOOK);
-	spawn_monster(GUARD);
-	spawn_monster(AGENT);
+	populate();
 }
 
 Level::~Level() {}
@@ -359,6 +356,36 @@ void Level::add_items() {
 	}
 }
 
+void Level::populate() {
+    //dogs
+    if(game->get_current_level() >= 0) {
+    	for (int i = 0; i < 4 - game->get_current_level() / 2; i++) {
+    		spawn_monster(DOG);
+    	}
+    }
+    
+    //mooks
+    if(game->get_current_level() >= 1) {
+        for(int i = 0; i < 5 - abs(4 - game->get_current_level()); i++) {
+            spawn_monster(MOOK);
+        }
+    }
+    
+    //guards
+    if(game->get_current_level() >= 5) {
+        for(int i = 0; i < 6 - abs(10 - game->get_current_level()); i++) {
+            spawn_monster(GUARD);
+        }
+    }
+    
+    //agents
+    if(game->get_current_level() >= 10) {
+        for(int i = 0; i < game->get_current_level() - 9; i++) {
+            spawn_monster(AGENT);
+        }
+    }
+}
+
 Room Level::rect_room() {
 int x = rand() % (int)floor(map_width * 0.9) + 1;
 		int width = rand() % (int)floor(map_width * 0.25) + int(map_width * 0.15);
@@ -590,6 +617,8 @@ void Level::spawn_monster(int monster_type) {
         if(!is_walkable(x, y))
             continue;
         if(contains_agent(x, y))
+            continue;
+        if(is_upstair(x, y) || is_downstair(x, y))
             continue;
         Agent *new_monster = new Monster(x, y, 0, this, game, monster_type);
         add_agent(new_monster);
