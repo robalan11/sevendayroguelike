@@ -137,6 +137,7 @@ void Player::close_door() {
             break;
         case DOOR_CLOSE_SUCCESS:
             strcat(msg, "You close a door.");
+            game->player_act();
             break;
         default:
             strcat(msg, "yay?");
@@ -252,6 +253,7 @@ void Player::fire() {
             } else {
                 ranged_attack(aim.x, aim.y);
                 inventory->use_ammo();
+                game->player_act();
             }
         }
         Agent_List *start = visible_agents;
@@ -265,11 +267,20 @@ void Player::fire() {
     }
 }
 
+void Player::turn(float angle) {
+    Agent::turn(angle);
+    game->player_act();
+}
+
 void Player::walk(int x, int y) {
-    if(walk_mode == TURNING)
-        Agent::walk_turn(x, y);
-    else if(walk_mode == STRAFING)
-        Agent::walk(x, y);
+    if(walk_mode == TURNING) {
+        if(Agent::walk_turn(x, y))
+            game->player_act();
+    }
+    else if(walk_mode == STRAFING) {
+        if(Agent::walk(x, y))
+            game->player_act();
+    }
 }
 
 void Player::toggle_walk_mode() {
@@ -313,5 +324,6 @@ void Player::use() {
 	else if (location->contains_item(position.x, position.y)) {
 		inventory->add_item(location->get_item(position.x, position.y));
 		location->remove_item(position.x, position.y);
+		game->player_act();
 	}
 }

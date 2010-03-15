@@ -15,6 +15,7 @@ class Game {
         void play();
 		bool descend();
 		bool ascend();
+		void player_act();
 		
 		void win();
 		void lose();
@@ -40,6 +41,7 @@ class Game {
 		int num_levels;      // Number of levels already generated.
 		bool game_over;      // Flag indicating whether the game is over.
 		bool game_won, game_lost; //Flags indicating the result of the game.
+		bool player_acted;   // Flag indicating whether the player has acted this turn.
 };
 
 #endif

@@ -24,7 +24,7 @@ Agent::~Agent() {
 }
 
 //The agent moves in the specified direction and keeps its facing.
-void Agent::walk(int x, int y) {
+bool Agent::walk(int x, int y) {
     if(x != 0 || y != 0) {
         if(location->is_walkable(position.x+x, position.y+y)) {
             if(location->contains_agent(position.x+x, position.y+y)) {
@@ -36,6 +36,7 @@ void Agent::walk(int x, int y) {
                     position.x+x, position.y+y);
                 set_position(position.x+x, position.y+y);
             }
+            return true;
         }
         else if(location->is_closed_door(position.x+x, position.y+y)) {
             location->open_door(position.x+x, position.y+y);
@@ -47,6 +48,7 @@ void Agent::walk(int x, int y) {
             strcat(msg, "a door.");
             msg[0] -= 0x20; //capitalize
             game->write_message(msg);
+            return true;
         }
         else {
             char msg[80] = "";
@@ -57,17 +59,20 @@ void Agent::walk(int x, int y) {
             strcat(msg, "into an obstacle.");
             msg[0] -= 0x20; //capitalize
             game->write_message(msg);
+            return false;
         }
     }
+    return true;
 }
 
 //The agent moves in the specified direction and faces in that direction.
-void Agent::walk_turn(int x, int y) {
+bool Agent::walk_turn(int x, int y) {
     if(x != 0 || y != 0) {
     	face(atan2(float(y), float(x)));
     	mutual_fov();
-        walk(x, y);
+        return walk(x, y);
     }
+    return true;
 }
 
 void Agent::attack(Agent *enemy) {

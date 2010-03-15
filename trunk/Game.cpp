@@ -100,9 +100,9 @@ void Game::show_title() {
 //The main game loop.
 void Game::play() {
     player->mutual_fov();
-    floors[current_level]->monsters_mutual_fov();
     int input;
     do {
+        floors[current_level]->monsters_mutual_fov();
         wclear(level_win);
         floors[current_level]->print();
         wrefresh(level_win);
@@ -124,8 +124,9 @@ void Game::play() {
         wrefresh(stats_win);
         
         refresh();
+        player_acted = false;
         input = player->take_turn();
-        if(!game_over)
+        if(!game_over && player_acted)
             floors[current_level]->monsters_take_turns();
     } while(input != 'Q' && !game_over);
 }
@@ -205,6 +206,10 @@ bool Game::ascend() {
 	} else {
 		return false;
 	}
+}
+
+void Game::player_act() {
+    player_acted = true;
 }
 
 void Game::win() {
