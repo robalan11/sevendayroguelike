@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Game.h"
+#include "Item.h"
 
 Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_upstair_y(), 0, loc, parent) {
     is_player = true;
@@ -45,11 +46,18 @@ void Player::default_keys() {
 	keys.inventory = 's';
 	keys.close = 'c';
 	keys.fire = 'f';
+	keys.look = 'v';
+	keys.wait = '-';
 }
 
 void Player::die() {
     Agent::die();
     game->lose();
+}
+
+void Player::wait() {
+    Agent::wait();
+    game->player_act();
 }
 
 void Player::close_door() {
@@ -83,31 +91,8 @@ void Player::close_door() {
         do {
             input_ok = true;
             int input = getch();
-            if(input == keys.walk_west) {
-                door.x = position.x-1;
-                door.y = position.y;
-            } else if(input == keys.walk_east) {
-                door.x = position.x+1;
-                door.y = position.y;
-            } else if(input == keys.walk_north) {
-                door.x = position.x;
-                door.y = position.y-1;
-            } else if(input == keys.walk_south) {
-                door.x = position.x;
-                door.y = position.y+1;
-            } else if(input == keys.walk_nw) {
-                door.x = position.x-1;
-                door.y = position.y-1;
-            } else if(input == keys.walk_sw) {
-                door.x = position.x-1;
-                door.y = position.y+1;
-            } else if(input == keys.walk_ne) {
-                door.x = position.x+1;
-                door.y = position.y-1;
-            } else if(input == keys.walk_se) {
-                door.x = position.x+1;
-                door.y = position.y+1;
-            } else {
+            door = key2pos_rel(input);
+            if((door.x == -1) && (door.y == -1)) {
                 input_ok = false;
                 game->write_message("I didn't catch that.  What direction?");
             }
@@ -160,26 +145,54 @@ int Player::get_armor() {
             ((Armor *)(inventory->get_current_hat()))->get_defense();
 }
 
+Position Player::key2pos_abs(int c) {
+    Position result, rel;
+    rel = key2pos_rel(c);
+    result.x = position.x + rel.x;
+    result.y = position.y + rel.y;
+    return result;
+}
+
+Position Player::key2pos_rel(int c) {
+    Position result;
+    if(c == keys.walk_west) {
+        result.x = -1;
+        result.y = 0;
+    } else if(c == keys.walk_east) {
+        result.x = 1;
+        result.y = 0;
+    } else if(c == keys.walk_north) {
+        result.x = 0;
+        result.y = -1;
+    } else if(c == keys.walk_south) {
+        result.x = 0;
+        result.y = 1;
+    } else if(c == keys.walk_nw) {
+        result.x = -1;
+        result.y = -1;
+    } else if(c == keys.walk_sw) {
+        result.x = -1;
+        result.y = 1;
+    } else if(c == keys.walk_ne) {
+        result.x = 1;
+        result.y = -1;
+    } else if(c == keys.walk_se) {
+        result.x = 1;
+        result.y = 1;
+    } else {
+        //throw out an error, somehow...
+        result.x = result.y = -1; //maybe there is a better way to do this
+        //but levels only have positive positions for now so it's ok?
+    }
+}
+
 //Get input from the keyboard and act on input.  Then recalculate player's fov.
 int Player::take_turn() {
     int input;
     input = getch();
-    if(input == keys.walk_west) 
-        walk(-1, 0);
-    else if(input == keys.walk_east)
-        walk(1, 0);
-    else if(input == keys.walk_north)
-        walk(0, -1);
-    else if(input == keys.walk_south)
-        walk(0, 1);
-    else if(input == keys.walk_nw)
-        walk(-1, -1);
-    else if(input == keys.walk_sw)
-        walk(-1, 1);
-    else if(input == keys.walk_ne)
-        walk(1, -1);
-    else if(input == keys.walk_se)
-        walk(1, 1);
+    Position destination = key2pos_rel(input);
+    if((destination.x != -1) && (destination.y != -1))
+        walk(position.x, position.y);
     else if(input == keys.turn_left)
         turn(float(-PI/4));
     else if(input == keys.turn_right)
@@ -194,6 +207,10 @@ int Player::take_turn() {
         close_door();
     else if(input == keys.fire)
         fire();
+    else if(input == keys.look)
+        look_mode();
+    else if(input == keys.wait)
+        wait();
     else {
         
     }
@@ -220,27 +237,12 @@ void Player::fire() {
             location->print();
             location->print_path(position.x, position.y, aim.x, aim.y);
             input = getch();
-            if(input == keys.walk_west) {
-                aim.x -= 1;
-            } else if(input == keys.walk_east) {
-                aim.x += 1;
-            } else if(input == keys.walk_north) {
-                aim.y -= 1;
-            } else if(input == keys.walk_south) {
-                aim.y += 1;
-            } else if(input == keys.walk_nw) {
-                aim.x -= 1;
-                aim.y -= 1;
-            } else if(input == keys.walk_sw) {
-                aim.x -= 1;
-                aim.y += 1;
-            } else if(input == keys.walk_ne) {
-                aim.x += 1;
-                aim.y -= 1;
-            } else if(input == keys.walk_se) {
-                aim.x += 1;
-                aim.y += 1;
-            } else if(input == '\t') {
+            Position dtarget = key2pos_rel(input);
+            if((dtarget.x != -1) && (dtarget.y != -1)) {
+                aim.x += dtarget.x;
+                aim.y += dtarget.y;
+            }
+            else if(input == '\t') {
                 visible_agents = visible_agents->next;
                 aim.x = visible_agents->agent->get_x_pos();
                 aim.y = visible_agents->agent->get_y_pos();
@@ -290,6 +292,23 @@ void Player::toggle_walk_mode() {
         walk_mode = TURNING;
 }
 
+void Player::look_mode() {
+    #if 0
+    curs_set(1);
+    Position look_pos;
+    look_pos.x = position.x;
+    look_pos.y = position.y;
+    int input;
+    do {
+        //show message
+        input = getch();
+        //move if requested
+        //show more if requested
+    } while(input != keys.use);
+    curs_set(0);
+    #endif
+}
+
 //Calculate FOV as for any agent, then update the map with this information.
 void Player::mutual_fov() {
     location->clear_visibility();
@@ -322,8 +341,13 @@ void Player::use() {
 		}
 	}
 	else if (location->contains_item(position.x, position.y)) {
-		inventory->add_item(location->get_item(position.x, position.y));
+        Item *i = location->get_item(position.x, position.y);
+		inventory->add_item(i);
 		location->remove_item(position.x, position.y);
+		char msg[80] = "You pick up a ";
+		strcat(msg, i->get_name());
+		strcat(msg, ".");
+		game->write_message(msg);
 		game->player_act();
 	}
 }
