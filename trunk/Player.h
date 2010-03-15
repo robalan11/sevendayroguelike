@@ -19,15 +19,18 @@ class Player : public Agent {
             int walk_west, walk_east, walk_north, walk_south,
                     walk_ne, walk_nw, walk_se, walk_sw,
                     turn_left, turn_right, use, change_walk_mode,
-					inventory, close, fire;
+					inventory, close, fire, look, wait;
         } keys;
         void init_keys();
         void default_keys();
 		void die();
+		void wait();
 		void close_door();
 		
 		int get_melee_damage();
 		int get_ranged_damage();
+		Position key2pos_abs(int c);
+		Position key2pos_rel(int c);
         
     public:
         Player(Level *loc, Game *parent);
@@ -38,7 +41,7 @@ class Player : public Agent {
         void turn(float angle);
         void walk(int x, int y);
         void toggle_walk_mode();
-		void toggle_inventory();
+		void look_mode();
 		Inventory* get_inventory() { return inventory; }
 		int get_armor();
         void mutual_fov();
