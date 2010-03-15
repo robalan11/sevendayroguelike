@@ -48,8 +48,8 @@ class Agent {
     public:
         Agent(int x, int y, float f, Level *loc, Game *parent);
         virtual ~Agent();
-        void walk(int x, int y);
-        void walk_turn(int x, int y);
+        bool walk(int x, int y);
+        bool walk_turn(int x, int y);
         void attack(Agent *enemy);
         void ranged_attack(int x, int y);
         void lose_hp(int hurt);

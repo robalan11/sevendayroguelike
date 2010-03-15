@@ -35,6 +35,7 @@ class Player : public Agent {
 		void use();
         int take_turn();
         void fire();
+        void turn(float angle);
         void walk(int x, int y);
         void toggle_walk_mode();
 		void toggle_inventory();
