@@ -91,8 +91,7 @@ void Player::close_door() {
         do {
             input_ok = true;
             int input = getch();
-            door = key2pos_rel(input);
-            if((door.x == -1) && (door.y == -1)) {
+            if(key2pos_rel(input, &door)) {
                 input_ok = false;
                 game->write_message("I didn't catch that.  What direction?");
             }
@@ -145,54 +144,53 @@ int Player::get_armor() {
             ((Armor *)(inventory->get_current_hat()))->get_defense();
 }
 
-Position Player::key2pos_abs(int c) {
-    Position result, rel;
-    rel = key2pos_rel(c);
-    result.x = position.x + rel.x;
-    result.y = position.y + rel.y;
-    return result;
+bool Player::key2pos_abs(int c, Position *result) {
+    Position rel;
+    bool ret = key2pos_rel(c, &rel);
+    result->x = position.x + rel.x;
+    result->y = position.y + rel.y;
+    return ret;
 }
 
-Position Player::key2pos_rel(int c) {
-    Position result;
+bool Player::key2pos_rel(int c, Position *result) {
+    bool ret = true;
     if(c == keys.walk_west) {
-        result.x = -1;
-        result.y = 0;
+        result->x = -1;
+        result->y = 0;
     } else if(c == keys.walk_east) {
-        result.x = 1;
-        result.y = 0;
+        result->x = 1;
+        result->y = 0;
     } else if(c == keys.walk_north) {
-        result.x = 0;
-        result.y = -1;
+        result->x = 0;
+        result->y = -1;
     } else if(c == keys.walk_south) {
-        result.x = 0;
-        result.y = 1;
+        result->x = 0;
+        result->y = 1;
     } else if(c == keys.walk_nw) {
-        result.x = -1;
-        result.y = -1;
+        result->x = -1;
+        result->y = -1;
     } else if(c == keys.walk_sw) {
-        result.x = -1;
-        result.y = 1;
+        result->x = -1;
+        result->y = 1;
     } else if(c == keys.walk_ne) {
-        result.x = 1;
-        result.y = -1;
+        result->x = 1;
+        result->y = -1;
     } else if(c == keys.walk_se) {
-        result.x = 1;
-        result.y = 1;
+        result->x = 1;
+        result->y = 1;
     } else {
-        //throw out an error, somehow...
-        result.x = result.y = -1; //maybe there is a better way to do this
-        //but levels only have positive positions for now so it's ok?
+        ret = false;
     }
+    return ret;
 }
 
 //Get input from the keyboard and act on input.  Then recalculate player's fov.
 int Player::take_turn() {
     int input;
     input = getch();
-    Position destination = key2pos_rel(input);
-    if((destination.x != -1) && (destination.y != -1))
-        walk(position.x, position.y);
+    Position destination;
+    if(key2pos_rel(input, &destination))
+        walk(destination.x, destination.y);
     else if(input == keys.turn_left)
         turn(float(-PI/4));
     else if(input == keys.turn_right)
@@ -237,8 +235,8 @@ void Player::fire() {
             location->print();
             location->print_path(position.x, position.y, aim.x, aim.y);
             input = getch();
-            Position dtarget = key2pos_rel(input);
-            if((dtarget.x != -1) && (dtarget.y != -1)) {
+            Position dtarget;
+            if(key2pos_rel(input, &dtarget)) {
                 aim.x += dtarget.x;
                 aim.y += dtarget.y;
             }
@@ -293,7 +291,6 @@ void Player::toggle_walk_mode() {
 }
 
 void Player::look_mode() {
-    #if 0
     curs_set(1);
     Position look_pos;
     look_pos.x = position.x;
@@ -301,12 +298,28 @@ void Player::look_mode() {
     int input;
     do {
         //show message
+        char msg[80] = "You see : ";
+        if(location->contains_agent(look_pos.x, look_pos.y)) {
+            strcat(msg, location->agent_at(look_pos.x, look_pos.y)->get_name());
+            strcat(msg, ", ");
+        }
+        if(location->contains_item(look_pos.x, look_pos.y)) {
+            strcat(msg, location->get_item(look_pos.x, look_pos.y)->get_name());
+            strcat(msg, ", ");
+        }
+        strcat(msg, location->get_tile_name(look_pos.x, look_pos.y));
+        game->write_message(msg);
+        move(look_pos.y+2, look_pos.x+1); //kludge
+        refresh();
         input = getch();
-        //move if requested
+        Position rel;
+        if(key2pos_rel(input, &rel)) {
+            look_pos.x += rel.x;
+            look_pos.y += rel.y;
+        }
         //show more if requested
     } while(input != keys.use);
     curs_set(0);
-    #endif
 }
 
 //Calculate FOV as for any agent, then update the map with this information.

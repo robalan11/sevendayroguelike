@@ -676,6 +676,35 @@ Item* Level::get_item(int x, int y) {
 	return map[x][y].stuff;
 }
 
+char *Level::get_tile_name(int x, int y) {
+    switch(map[x][y].symbol) {
+        case '#':
+            return "wall";
+            break;
+        case '.':
+            return "floor";
+            break;
+        case '+':
+            return "a closed door";
+            break;
+        case '/':
+            return "an open door";
+            break;
+        case '%':
+            return "a corpse";
+            break;
+        case '<':
+            return "stairs up";
+            break;
+        case '>':
+            return "stairs down";
+            break;
+        default:
+            return "something";
+            break;
+    }
+}
+
 void Level::remove_item(int x, int y) {
 	map[x][y].stuff = NULL;
 }

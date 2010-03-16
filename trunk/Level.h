@@ -64,6 +64,7 @@ public:
 	bool contains_agent(int x, int y);
 	bool contains_item(int x, int y);
 	Item* get_item(int x, int y);
+	char *get_tile_name(int x, int y);
 	Agent *agent_at(int x, int y);
 	bool is_visible(int x1, int y1, int x2, int y2);
 	bool is_walkable(int x, int y);
