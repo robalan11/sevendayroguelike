@@ -29,8 +29,8 @@ class Player : public Agent {
 		
 		int get_melee_damage();
 		int get_ranged_damage();
-		Position key2pos_abs(int c);
-		Position key2pos_rel(int c);
+		bool key2pos_abs(int c, Position *result);
+		bool key2pos_rel(int c, Position *result);
         
     public:
         Player(Level *loc, Game *parent);
