@@ -1,0 +1,49 @@
+things to add or change
+
+add features
+environment examination
+    agent descriptions
+    message history
+i/o help
+    config file(s) (keys)
+    online help
+endgame and quitting
+    saving and loading
+    scores
+    mortems
+safewalk mode
+wait
+
+improve features
+targeting
+    targeting memory
+    don't target self
+descriptions and messages
+    improve item messages (include quantity, a/an)
+    inventory messages (you use/wield/wear...)
+    information on targeting
+    better out-of-LOS messages (something...)
+    improve messages (old messages in grey, only one turn per line)
+better ai
+    enemies respond to being attacked from behind
+    enemies try to find the player when lost
+    better following (more turn to face)?
+better timing system
+balance sucks, maybe fix that?
+    with best armor, nothing can hurt you
+        change armor to % reduction
+    with best weapons, everything goes down in a couple hits (maybe that's ok)
+    endgame, you have way too much ammunition
+        reduce ammo generation
+        make enemies drop ammo and reduce ammo generation even more
+martini is lame full heal, should be better
+    increase player health
+
+source readability and so on
+cleanup files (function ordering, access specification)
+    especially Player.cpp, Level.cpp
+
+documentation: new features need documentation
+timing
+lookmode (key, feature)
+wait (key)
