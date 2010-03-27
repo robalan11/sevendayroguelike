@@ -107,13 +107,8 @@ void Game::play() {
         floors[current_level]->print();
         wrefresh(level_win);
         
-        int msg_x, msg_y;
-        getyx(message_win, msg_y, msg_x);
-        wclear(message_win);
-        mvwprintw(message_win, 0, 0, "%s", message_line_0);
-        mvwprintw(message_win, 1, 0, "%s", message_line_1);
-        wrefresh(message_win);
-        wmove(message_win, msg_y, msg_x);
+        show_messages();
+        end_message_turn();
         
         wclear(stats_win);
         mvwprintw(stats_win, 0, 0, "HP %2i/%2i    Floor %i", player->get_hp(), player->get_max_hp(), current_level);
@@ -129,6 +124,10 @@ void Game::play() {
         if(!game_over && player_acted)
             floors[current_level]->monsters_take_turns();
     } while(input != 'Q' && !game_over);
+    if(game_lost) {
+        show_messages();
+        while(getch() != 'Q');
+    }
 }
 
 void Game::end() {
@@ -212,6 +211,13 @@ void Game::player_act() {
     player_acted = true;
 }
 
+void Game::end_message_turn() {
+    if(message_line_1[0]) {
+        strcpy(message_line_0, message_line_1);
+        message_line_1[0] = '\0';
+    }
+}
+
 void Game::win() {
     game_over = true;
     game_won = true;
@@ -234,18 +240,31 @@ void Game::add_dead_agent(Agent *agent) {
 }
 
 void Game::write_message(const char *msg) {
-    int x, y, mx, my;
-    getyx(message_win, y, x);
-    getmaxyx(message_win, my, mx);
-    if(strlen(msg) >= (unsigned int)(mx - x)) {
-        wclear(message_win);
+    unsigned int mx = getmaxx(message_win);
+    if(strlen(msg) + strlen(message_line_1) >= mx) {
         strcpy(message_line_0, message_line_1);
-        mvwprintw(message_win, 0, 0, "%s", message_line_0);
         message_line_1[0] = '\0';
-        wmove(message_win, 1, 0);
     }
-    wprintw(message_win, "%s ", msg);
     strcat(message_line_1, msg);
     strcat(message_line_1, " ");
+    show_messages();
+}
+
+//messages shown in aimmode or lookmode, don't keep them around.
+void Game::write_temp_message(const char *msg) {
+    wclear(message_win);
+    wattron(message_win, COLOR_PAIR(2));
+    mvwprintw(message_win, 0, 0, "%s", message_line_0);
+    wattroff(message_win, COLOR_PAIR(2));
+    mvwprintw(message_win, 1, 0, "%s", msg);
+    wrefresh(message_win);
+}
+
+void Game::show_messages() {
+    wclear(message_win);
+    wattron(message_win, COLOR_PAIR(2));
+    mvwprintw(message_win, 0, 0, "%s", message_line_0);
+    wattroff(message_win, COLOR_PAIR(2));
+    mvwprintw(message_win, 1, 0, "%s", message_line_1);
     wrefresh(message_win);
 }

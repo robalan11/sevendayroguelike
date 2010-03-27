@@ -17,6 +17,7 @@ Player::Player(Level *loc, Game *parent) : Agent(loc->get_upstair_x(), loc->get_
     ranged_accuracy = 9;
     vision = 10;
     init_keys();
+    last_targeted = NULL;
 	inventory = new Inventory(game->get_inventory_win(), this);
 	visible_corners = (Position *)calloc((2*vision) * (2*vision), sizeof(Position));
 }
@@ -52,6 +53,7 @@ void Player::default_keys() {
 
 void Player::die() {
     Agent::die();
+    game->write_message("You die!  Press 'Q' to end the game.");
     game->lose();
 }
 
@@ -227,6 +229,17 @@ void Player::fire() {
     } else {
         Position aim;
         Agent_List *visible_agents = location->get_targets(this);
+        //try to find the last targeted
+        if(last_targeted) {
+            Agent_List *ref = visible_agents;
+            visible_agents = visible_agents->next;
+            while(visible_agents != ref) {
+                if(visible_agents->agent == last_targeted)
+                    break;
+            }
+            if(visible_agents->agent != last_targeted)
+                visible_agents = ref;
+        }
         
         aim.x = visible_agents->agent->get_x_pos();
         aim.y = visible_agents->agent->get_y_pos();
@@ -234,6 +247,7 @@ void Player::fire() {
         do {
             location->print();
             location->print_path(position.x, position.y, aim.x, aim.y);
+            look_at(aim.x, aim.y);
             input = getch();
             Position dtarget;
             if(key2pos_rel(input, &dtarget)) {
@@ -297,18 +311,8 @@ void Player::look_mode() {
     look_pos.y = position.y;
     int input;
     do {
-        //show message
-        char msg[80] = "You see : ";
-        if(location->contains_agent(look_pos.x, look_pos.y)) {
-            strcat(msg, location->agent_at(look_pos.x, look_pos.y)->get_name());
-            strcat(msg, ", ");
-        }
-        if(location->contains_item(look_pos.x, look_pos.y)) {
-            strcat(msg, location->get_item(look_pos.x, look_pos.y)->get_name());
-            strcat(msg, ", ");
-        }
-        strcat(msg, location->get_tile_name(look_pos.x, look_pos.y));
-        game->write_message(msg);
+        look_at(look_pos.x, look_pos.y);
+        
         move(look_pos.y+2, look_pos.x+1); //kludge
         refresh();
         input = getch();
@@ -320,6 +324,31 @@ void Player::look_mode() {
         //show more if requested
     } while(input != keys.use);
     curs_set(0);
+}
+
+void Player::look_at(int x, int y) {
+    if(location->revealed(x, y)) {
+        char msg[80] = "You ";
+        if(location->visible(x, y)) {
+            strcat(msg, "see : ");
+            if(location->contains_agent(x, y)) {
+                strcat(msg, location->agent_at(x, y)->get_name());
+                strcat(msg, ", ");
+            }
+            if(location->contains_item(x, y)) {
+                strcat(msg, location->get_item(x, y)->get_name());
+                strcat(msg, ", ");
+            }
+        }
+        else {
+            strcat(msg, "recall : ");
+        }
+        strcat(msg, location->get_tile_name(x, y));
+        game->write_temp_message(msg);
+    }
+    else {
+        game->write_temp_message("You know nothing about this location.");
+    }
 }
 
 //Calculate FOV as for any agent, then update the map with this information.

@@ -664,6 +664,14 @@ void Level::print_location(int i, int j) {
     }
 }
 
+bool Level::revealed(int x, int y) {
+    return map[x][y].revealed;
+}
+
+bool Level::visible(int x, int y) {
+    return map[x][y].visible;
+}
+
 bool Level::contains_agent(int x, int y) {
     return (map[x][y].agent != NULL);
 }

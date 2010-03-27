@@ -61,6 +61,8 @@ public:
     
 	void print();
 	void print_location(int x, int y);
+	bool revealed(int x, int y);
+	bool visible(int x, int y);
 	bool contains_agent(int x, int y);
 	bool contains_item(int x, int y);
 	Item* get_item(int x, int y);

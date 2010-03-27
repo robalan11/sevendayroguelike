@@ -3,7 +3,6 @@ things to add or change
 add features
 environment examination
     agent descriptions
-    message history
 i/o help
     config file(s) (keys)
     online help
@@ -12,7 +11,6 @@ endgame and quitting
     scores
     mortems
 safewalk mode
-wait
 
 improve features
 targeting
@@ -21,9 +19,11 @@ targeting
 descriptions and messages
     improve item messages (include quantity, a/an)
     inventory messages (you use/wield/wear...)
-    information on targeting
     better out-of-LOS messages (something...)
     improve messages (old messages in grey, only one turn per line)
+        flags indicating which messages are old so that bottom line
+        may be grey and top line may be bright
+    message history buffer
 better ai
     enemies respond to being attacked from behind
     enemies try to find the player when lost
