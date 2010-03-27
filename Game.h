@@ -16,6 +16,7 @@ class Game {
 		bool descend();
 		bool ascend();
 		void player_act();
+		void end_message_turn();
 		
 		void win();
 		void lose();
@@ -26,6 +27,8 @@ class Game {
 		int get_current_level() { return current_level; }
 		
 		void write_message(const char *msg);
+		void write_temp_message(const char *msg);
+		void show_messages();
 		WINDOW* get_inventory_win() { return inventory_win; }
 		
     private:

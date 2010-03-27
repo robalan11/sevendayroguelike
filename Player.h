@@ -23,10 +23,12 @@ class Player : public Agent {
         } keys;
         void init_keys();
         void default_keys();
+        
 		void die();
 		void wait();
 		void close_door();
 		
+		Agent *last_targeted;
 		int get_melee_damage();
 		int get_ranged_damage();
 		bool key2pos_abs(int c, Position *result);
@@ -42,6 +44,7 @@ class Player : public Agent {
         void walk(int x, int y);
         void toggle_walk_mode();
 		void look_mode();
+		void look_at(int x, int y);
 		Inventory* get_inventory() { return inventory; }
 		int get_armor();
         void mutual_fov();

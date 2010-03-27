@@ -59,7 +59,7 @@ bool Agent::walk(int x, int y) {
             strcat(msg, "into an obstacle.");
             msg[0] -= 0x20; //capitalize
             game->write_message(msg);
-            return false;
+            return true;
         }
     }
     return true;
